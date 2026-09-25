@@ -1,0 +1,30 @@
+<div
+  class="zona"
+  [class.encima]="encima()"
+  (dragover)="arrastrando($event, true)"
+  (dragleave)="arrastrando($event, false)"
+  (drop)="soltar($event)"
+>
+  <div class="miniatura">
+    @if (url()) {
+      <img [src]="url()" alt="" />
+    } @else {
+      <app-icono nombre="imagen" [tam]="22" />
+    }
+  </div>
+  <div class="acciones">
+    <label class="boton" [class.deshabilitado]="subiendo()">
+      <app-icono [nombre]="subiendo() ? 'reloj' : 'subir'" [tam]="15" />
+      {{ subiendo() ? 'Subiendo…' : url() ? 'Cambiar imagen' : 'Subir imagen' }}
+      <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" [disabled]="subiendo()" (change)="elegir($event)" hidden />
+    </label>
+    @if (url() && !subiendo()) {
+      <button type="button" class="enlace peligro" (click)="cambio.emit('')">Quitar</button>
+    }
+    <button type="button" class="enlace" (click)="verUrl.set(!verUrl())">{{ verUrl() ? 'Ocultar URL' : 'Usar URL' }}</button>
+    <small>JPG, PNG, WEBP o GIF, hasta 5 MB. También puedes arrastrarla aquí.</small>
+  </div>
+</div>
+@if (verUrl()) {
+  <input class="url" type="url" [value]="url() ?? ''" (change)="pegarUrl($event)" placeholder="https://…" />
+}

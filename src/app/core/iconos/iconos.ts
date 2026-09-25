@@ -27,6 +27,8 @@ export const ICONOS = {
   check: 'M20 6L9 17l-5-5',
   basura: 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14',
   duplicar: 'M9 9h11v11H9zM5 15H4V4h11v1',
+  imagen: 'M3 5h18v14H3zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM21 15l-5-5L5 19',
+  subir: 'M12 21V9M7 14l5-5 5 5M5 3h14',
   descargar: 'M12 3v12M7 10l5 5 5-5M5 21h14',
   ajustar: 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
   telefono:

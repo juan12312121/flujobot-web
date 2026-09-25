@@ -39,10 +39,10 @@
       <span>Descripción (se ve en WhatsApp)</span>
       <textarea formControlName="descripcion" rows="2"></textarea>
     </label>
-    <label class="campo">
-      <span>Foto (URL)</span>
-      <input formControlName="imagenUrl" type="url" placeholder="https://…" />
-    </label>
+    <div class="campo">
+      <span>Foto</span>
+      <app-subir-imagen uso="productos" [url]="form.controls.imagenUrl.value" (cambio)="form.controls.imagenUrl.setValue($event)" />
+    </div>
     <div class="fila">
       <label class="campo">
         <span>SKU / clave (opcional)</span>

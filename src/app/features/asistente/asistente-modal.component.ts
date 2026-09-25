@@ -12,7 +12,10 @@ type Etapa = 'escribir' | 'pensando' | 'propuesta';
 /** Ejemplos para no empezar con la hoja en blanco, según el tipo de negocio. */
 const EJEMPLOS_CREAR: Record<Giro, string[]> = {
   tienda: ['Que vean mi catálogo, armen su pedido, me den su dirección y teléfono, y al final les confirme el pedido con un folio.'],
-  restaurante: ['Pedidos para llevar: que elijan del menú, den dirección y teléfono. Si piden más de $300 el envío es gratis. También que puedan reservar mesa.'],
+  restaurante: [
+    'Pedidos a domicilio: que elijan del menú, den su dirección y teléfono. Si piden más de $300 el envío es gratis.',
+    'Reservaciones: que elijan día y hora, cuántas personas son y a nombre de quién.',
+  ],
   belleza: ['Que agenden cita eligiendo el servicio, puedan ver precios y ubicación, y si quieren hablar conmigo que los pase.'],
   salud: ['Que los pacientes agenden consulta, vean horarios y costos, y que las urgencias pasen directo con el doctor.'],
   servicios: ['Que pidan cotización contando qué necesitan, dejen nombre y teléfono, o agenden una visita a domicilio.'],

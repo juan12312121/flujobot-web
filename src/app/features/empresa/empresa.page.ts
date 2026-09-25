@@ -6,6 +6,7 @@ import { GIROS, PALETAS } from '../../core/empresa/giros';
 import { Empresa, Giro, Horario, Marca, Modulos, OpcionGiro, Terminos } from '../../core/models';
 import { LogoEmpresaComponent } from '../../shared/components/logo-empresa/logo-empresa.component';
 import { IconoComponent } from '../../shared/components/icono/icono.component';
+import { SubirImagenComponent } from '../../shared/components/subir-imagen/subir-imagen.component';
 
 type Seccion = 'identidad' | 'apariencia' | 'modulos' | 'horario' | 'conocimiento';
 
@@ -53,7 +54,7 @@ const TERMINOS: { clave: keyof Terminos; etiqueta: string }[] = [
  */
 @Component({
   selector: 'app-empresa',
-  imports: [IconoComponent, LogoEmpresaComponent],
+  imports: [IconoComponent, LogoEmpresaComponent, SubirImagenComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './empresa.page.html',
   styleUrl: './empresa.page.css',
@@ -126,10 +127,6 @@ export class EmpresaPage implements OnInit {
 
   protected color(campo: 'colorPrimario' | 'colorMenu', evento: Event): void {
     this.marca({ [campo]: (evento.target as HTMLInputElement).value });
-  }
-
-  protected logo(evento: Event): void {
-    this.marca({ logoUrl: (evento.target as HTMLInputElement).value.trim() });
   }
 
   protected modulo(clave: keyof Modulos, evento: Event): void {

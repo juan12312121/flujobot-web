@@ -93,11 +93,11 @@
                 <small>El texto se ajusta solo para que se lea.</small>
               </label>
             </div>
-            <label class="campo">
-              <span>Logo (URL de la imagen)</span>
-              <input type="url" [value]="b.marca.logoUrl" (change)="logo($event)" placeholder="https://…/logo.png" />
+            <div class="campo">
+              <span>Logo</span>
+              <app-subir-imagen uso="logo" [url]="b.marca.logoUrl" (cambio)="marca({ logoUrl: $event })" />
               <small>Cuadrado de preferencia. Sin logo se usan tus iniciales.</small>
-            </label>
+            </div>
 
             <span class="etiqueta">Vista previa</span>
             <div class="previa" [style.background]="b.marca.colorMenu">

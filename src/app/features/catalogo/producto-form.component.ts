@@ -4,11 +4,12 @@ import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { DatosProducto, Producto } from '../../core/models';
 import { AutoEnfocarDirective } from '../../shared/directives/auto-enfocar.directive';
 import { IconoComponent } from '../../shared/components/icono/icono.component';
+import { SubirImagenComponent } from '../../shared/components/subir-imagen/subir-imagen.component';
 
 /** Alta/edición de un producto. Presentacional: recibe el producto y emite los datos limpios. */
 @Component({
   selector: 'app-producto-form',
-  imports: [IconoComponent, ReactiveFormsModule, ModalComponent, AutoEnfocarDirective],
+  imports: [IconoComponent, SubirImagenComponent, ReactiveFormsModule, ModalComponent, AutoEnfocarDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './producto-form.component.html',
   styleUrl: './producto-form.component.css',

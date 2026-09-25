@@ -1,0 +1,93 @@
+:host {
+  display: block;
+}
+
+.zona {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border: 1px dashed var(--borde);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.zona.encima {
+  border-color: var(--primario);
+  background: var(--primario-claro);
+}
+
+.miniatura {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--fondo);
+  color: var(--suave);
+}
+
+.miniatura img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.acciones small {
+  flex-basis: 100%;
+  color: var(--suave);
+  font-size: 11.5px;
+}
+
+.boton {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--superficie);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.boton:hover {
+  border-color: var(--primario);
+  color: var(--primario-osc);
+}
+
+.boton.deshabilitado {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.enlace {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primario-osc);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.enlace.peligro {
+  color: var(--peligro);
+}
+
+.url {
+  width: 100%;
+  margin-top: 6px;
+}

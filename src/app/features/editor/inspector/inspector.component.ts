@@ -5,13 +5,14 @@ import { TareaN8nComponent } from '../tarea-n8n/tarea-n8n.component';
 import { nuevoId, TIPOS } from '../../../core/flujo/tipos-de-nodo';
 import { DatosNodo, OpcionMenu } from '../../../core/models';
 import { IconoComponent } from '../../../shared/components/icono/icono.component';
+import { SubirImagenComponent } from '../../../shared/components/subir-imagen/subir-imagen.component';
 
 const VARIABLES_BASE = ['nombre', 'telefono', 'empresa', 'opcion', 'producto.nombre', 'producto.precio', 'cantidad', 'total', 'folio', 'cita.fecha', 'cita.hora', 'cita.folio'];
 
 /** Formulario del bloque seleccionado. Cada cambio va directo al store (y de ahí al autoguardado). */
 @Component({
   selector: 'app-inspector',
-  imports: [TareaN8nComponent, IconoComponent],
+  imports: [TareaN8nComponent, IconoComponent, SubirImagenComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './inspector.component.html',
   styleUrl: './inspector.component.css',

@@ -39,10 +39,10 @@
         <textarea rows="5" [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
         <small>*negritas*, _cursivas_ y variables como {{ '{{nombre}}' }}</small>
       </label>
-      <label class="campo">
-        <span>Imagen (URL, opcional)</span>
-        <input type="url" [value]="n.datos.imagenUrl ?? ''" (change)="texto('imagenUrl', $event)" placeholder="https://…" />
-      </label>
+      <div class="campo">
+        <span>Imagen (opcional)</span>
+        <app-subir-imagen uso="mensajes" [url]="n.datos.imagenUrl" (cambio)="cambiar('imagenUrl', $event || undefined)" />
+      </div>
     }
 
     @case ('menu') {
