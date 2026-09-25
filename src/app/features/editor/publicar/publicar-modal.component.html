@@ -1,0 +1,28 @@
+<app-modal titulo="Flujo publicado" [ancho]="520" (cerrar)="cerrar.emit()">
+  <div class="exito">
+    <span><app-icono nombre="check" [tam]="18" [grosor]="2.6" /></span>
+    <div>
+      <strong>Versión {{ resultado().bot.publicado?.version }} activa</strong>
+      <p class="suave">Los mensajes de WhatsApp ya usan este flujo.</p>
+    </div>
+  </div>
+
+  @if (resultado().modo === 'n8n') {
+    <p>Se creó/actualizó el workflow del bot en n8n. Evolution manda los mensajes a:</p>
+    <code class="url">{{ resultado().webhookUrl }}</code>
+  } @else {
+    <p>
+      La API no tiene configurado n8n (<code>N8N_URL</code> + <code>N8N_API_KEY</code>). Descarga el workflow, impórtalo en n8n
+      (<i>Workflows → Import from file</i>), elige la credencial de Evolution en el último nodo y actívalo. Después apunta el webhook de la instancia
+      de Evolution a la URL de su nodo "WhatsApp entrante".
+    </p>
+  }
+
+  @for (a of resultado().avisos; track a) {
+    <p class="aviso">{{ a }}</p>
+  }
+  <div pie>
+    <button type="button" class="btn" (click)="descargar.emit()"><app-icono nombre="descargar" [tam]="16" /> Descargar workflow n8n</button>
+    <button type="button" class="btn btn-primario" (click)="cerrar.emit()">Listo</button>
+  </div>
+</app-modal>

@@ -1,0 +1,88 @@
+<section class="tarea">
+  @switch (etapa()) {
+    @case ('inicio') {
+      <p class="explica">¿No tienes la tarea hecha en n8n? Descríbela y el asistente la crea por ti.</p>
+      <button type="button" class="btn btn-chico btn-primario" (click)="etapa.set('escribir')">
+        <app-icono nombre="destellos" [tam]="15" /> Crear la tarea con el asistente
+      </button>
+    }
+
+    @case ('escribir') {
+      <label class="campo">
+        <span>¿Qué debe pasar en este punto?</span>
+        <textarea rows="3" [value]="descripcion()" (input)="escribir($event)" placeholder="Ej. Mándame un correo con el pedido y guárdalo en mi Google Sheets"></textarea>
+      </label>
+      <div class="ejemplos">
+        @for (e of ejemplos; track e) {
+          <button type="button" (click)="descripcion.set(e)">{{ e }}</button>
+        }
+      </div>
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+      <div class="botones">
+        <button type="button" class="btn btn-chico" (click)="etapa.set('inicio')">Cancelar</button>
+        <button type="button" class="btn btn-chico btn-primario" [disabled]="!puedeGenerar()" (click)="generar()">
+          <app-icono nombre="destellos" [tam]="15" /> Proponer tarea
+        </button>
+      </div>
+    }
+
+    @case ('pensando') {
+      <p class="espera"><app-icono nombre="destellos" [tam]="16" /> Armando la tarea… (unos segundos)</p>
+    }
+
+    @case ('publicando') {
+      <p class="espera"><app-icono nombre="rayo" [tam]="16" /> Creando el workflow en n8n…</p>
+    }
+
+    @case ('propuesta') {
+      @if (propuesta(); as p) {
+        <strong>{{ p.nombre }}</strong>
+        <p class="resumen">{{ p.resumen }}</p>
+        <ol class="acciones">
+          @for (a of p.acciones; track $index) {
+            @let info = describir(a);
+            <li>
+              <span class="icono"><app-icono [nombre]="info.icono" [tam]="14" /></span>
+              <span><b>{{ info.titulo }}</b><small>{{ info.detalle }}</small></span>
+            </li>
+          }
+        </ol>
+        @if (p.respuesta) {
+          <p class="nota">Al terminar, el bot dirá: "{{ p.respuesta }}"</p>
+        }
+        @if (p.faltantes.length) {
+          <p class="aviso">Te faltó decir: {{ p.faltantes.join(' · ') }}. Lo completas en n8n.</p>
+        }
+        <div class="botones">
+          <button type="button" class="btn btn-chico" (click)="reiniciar()">Cambiar</button>
+          <button type="button" class="btn btn-chico btn-primario" (click)="crear()"><app-icono nombre="check" [tam]="15" /> Crear en n8n</button>
+        </div>
+      }
+    }
+
+    @case ('lista') {
+      @if (publicada(); as r) {
+        <p class="listo"><app-icono nombre="check" [tam]="16" /> {{ r.modo === 'n8n' ? (r.activo ? 'Tarea creada y activa en n8n.' : 'Tarea creada en n8n (apagada).') : 'Tarea lista para importar.' }} Su dirección ya quedó en este bloque.</p>
+        @if (r.pendientes.length) {
+          <span class="etiqueta">Termina esto en n8n:</span>
+          <ul class="pendientes">
+            @for (p of r.pendientes; track p) {
+              <li>{{ p }}</li>
+            }
+          </ul>
+        }
+        @for (a of r.avisos; track a) {
+          <p class="aviso">{{ a }}</p>
+        }
+        <div class="botones">
+          @if (r.modo === 'manual') {
+            <button type="button" class="btn btn-chico" (click)="descargar()"><app-icono nombre="descargar" [tam]="15" /> Descargar workflow</button>
+          }
+          <button type="button" class="btn btn-chico" (click)="reiniciar()">Crear otra</button>
+        </div>
+      }
+    }
+  }
+</section>

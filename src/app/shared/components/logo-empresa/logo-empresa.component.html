@@ -1,0 +1,5 @@
+@if (logoUrl() && !falla()) {
+  <img [src]="logoUrl()" [alt]="nombre()" (error)="falla.set(true)" />
+} @else {
+  <span [style.background]="color()">{{ iniciales() }}</span>
+}

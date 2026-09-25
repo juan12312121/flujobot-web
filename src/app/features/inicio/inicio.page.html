@@ -1,0 +1,104 @@
+<div class="pagina">
+  <div class="encabezado-pagina">
+    <div>
+      <h1>Hola, {{ sesion.usuario()?.nombre?.split(' ')?.[0] }}</h1>
+      <p>Así va {{ sesion.empresa()?.nombre }}.</p>
+    </div>
+    <a class="btn btn-primario" routerLink="/bots">Ir a mis bots</a>
+  </div>
+
+  @if (resumen(); as r) {
+    <div class="cifras">
+      @if (m().agenda) {
+        <a class="tarjeta cifra" routerLink="/agenda">
+          <span>{{ t().citas }} de hoy</span>
+          <strong>{{ r.citasHoy }}</strong>
+          <small>{{ r.proximasCitas.length ? 'la siguiente: ' + (r.proximasCitas[0].inicio | date: 'EEE d, HH:mm') : 'sin próximas' }}</small>
+        </a>
+      }
+      @if (m().pedidos) {
+        <a class="tarjeta cifra" routerLink="/pedidos">
+          <span>{{ t().pedidos }} por atender</span>
+          <strong>{{ r.pedidosPendientes }}</strong>
+          <small>{{ r.ventasMes.total | dinero }} este mes</small>
+        </a>
+      }
+      <a class="tarjeta cifra" routerLink="/conversaciones">
+        <span>Conversaciones (24 h)</span>
+        <strong>{{ r.conversacionesHoy }}</strong>
+        <small [class.alerta]="r.esperandoAsesor">{{ r.esperandoAsesor }} esperando asesor</small>
+      </a>
+      @if (m().catalogo) {
+        <a class="tarjeta cifra" routerLink="/catalogo">
+          <span>{{ t().items }}</span>
+          <strong>{{ r.productos }}</strong>
+          <small>activos · {{ r.bots }} bots</small>
+        </a>
+      }
+    </div>
+
+    @if (r.bots === 0 || (m().catalogo && r.productos === 0)) {
+      <section class="tarjeta pasos">
+        <h2>Para empezar</h2>
+        <ol>
+          @if (sesion.esAdmin()) {
+            <li><a routerLink="/empresa">Pon tu logo, tus colores y tu horario</a></li>
+          }
+          @if (m().catalogo) {
+            <li [class.hecho]="r.productos > 0"><a routerLink="/catalogo">Da de alta tus {{ t().items.toLowerCase() }}</a></li>
+          }
+          <li [class.hecho]="r.bots > 0"><a routerLink="/bots">Crea tu bot con la plantilla recomendada</a> y pruébalo en el simulador</li>
+          <li>Conecta el WhatsApp del negocio y publica</li>
+        </ol>
+      </section>
+    }
+
+    <div class="listas">
+      @if (m().agenda) {
+        <section class="tarjeta">
+          <header><h2>Próximas {{ t().citas.toLowerCase() }}</h2><a routerLink="/agenda">Ver agenda</a></header>
+          @if (r.proximasCitas.length === 0) {
+            <p class="vacio">No hay {{ t().citas.toLowerCase() }} próximas.</p>
+          } @else {
+            <table class="tabla">
+              <tbody>
+                @for (c of r.proximasCitas; track c.id) {
+                  <tr>
+                    <td><b>{{ c.inicio | date: 'EEE d MMM, HH:mm' }}</b></td>
+                    <td>{{ c.nombreContacto || c.contacto }}</td>
+                    <td class="suave">{{ c.servicio }}</td>
+                    <td><span class="insignia" [class.insignia-verde]="c.estado === 'confirmada'">{{ c.estado }}</span></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </section>
+      }
+      @if (m().pedidos) {
+        <section class="tarjeta">
+          <header><h2>Últimos {{ t().pedidos.toLowerCase() }}</h2><a routerLink="/pedidos">Ver todos</a></header>
+          @if (r.ultimosPedidos.length === 0) {
+            <p class="vacio">Todavía no llegan {{ t().pedidos.toLowerCase() }} por WhatsApp.</p>
+          } @else {
+            <table class="tabla">
+              <tbody>
+                @for (p of r.ultimosPedidos; track p.id) {
+                  <tr>
+                    <td><b>{{ p.folio }}</b></td>
+                    <td>{{ p.nombreContacto || p.contacto }}</td>
+                    <td class="suave">{{ p.createdAt | date: 'd MMM HH:mm' }}</td>
+                    <td><span class="insignia">{{ p.estado }}</span></td>
+                    <td class="num">{{ p.items.length ? (p.total | dinero) : '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </section>
+      }
+    </div>
+  } @else {
+    <p class="suave">Cargando…</p>
+  }
+</div>

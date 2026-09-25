@@ -1,0 +1,139 @@
+.intro {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--primario-claro);
+  color: var(--primario-osc);
+  line-height: 1.45;
+}
+
+.ejemplos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 6px 0 8px;
+}
+
+.ejemplos button {
+  padding: 8px 11px;
+  border: 1px dashed var(--borde);
+  border-radius: 9px;
+  background: var(--superficie-2);
+  color: #344054;
+  font: inherit;
+  font-size: 12.5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ejemplos button:hover {
+  border-color: var(--primario);
+  background: var(--primario-claro);
+}
+
+.error,
+.nota {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  margin: 12px 0 4px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.error {
+  background: var(--peligro-claro);
+  color: var(--peligro);
+}
+
+.nota {
+  background: var(--aviso-claro);
+  color: var(--aviso);
+}
+
+.pensando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 36px 10px;
+  text-align: center;
+}
+
+.pensando p {
+  margin: 0;
+}
+
+.orbe {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--primario-claro);
+  color: var(--primario);
+  animation: respira 1.6s ease-in-out infinite;
+}
+
+@keyframes respira {
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 10px color-mix(in srgb, var(--primario) 12%, transparent);
+  }
+}
+
+.resumen {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border-left: 4px solid var(--primario);
+  border-radius: 8px;
+  background: var(--superficie-2);
+}
+
+.resumen p {
+  margin: 4px 0 0;
+  line-height: 1.5;
+}
+
+.bloques {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 14px;
+}
+
+.bloque {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 4px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  font-size: 12.5px;
+}
+
+.bloque b {
+  margin-left: 2px;
+  color: var(--suave);
+}
+
+.bloque .icono {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #fff;
+}
+
+.supuestos ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+  color: #344054;
+  font-size: 13px;
+  line-height: 1.5;
+}

@@ -1,0 +1,68 @@
+<app-modal [titulo]="(producto() ? 'Editar ' : 'Agregar ') + termino().toLowerCase()" [ancho]="560" (cerrar)="cancelar.emit()">
+  <form [formGroup]="form" (ngSubmit)="enviar()" id="form-producto">
+    <div class="tipos" role="radiogroup" aria-label="Tipo">
+      <button type="button" [class.elegido]="form.controls.tipo.value === 'producto'" (click)="form.controls.tipo.setValue('producto')">
+        <span class="titulo-tipo"><app-icono nombre="paquete" [tam]="16" /> Producto</span> <small>Se vende, va al carrito</small>
+      </button>
+      <button type="button" [class.elegido]="form.controls.tipo.value === 'servicio'" (click)="form.controls.tipo.setValue('servicio')">
+        <span class="titulo-tipo"><app-icono nombre="reloj" [tam]="16" /> Servicio</span> <small>Tiene duración, se agenda</small>
+      </button>
+    </div>
+    <label class="campo">
+      <span>Nombre</span>
+      <input formControlName="nombre" placeholder="Taco al pastor" appAutoEnfocar />
+    </label>
+    <div class="fila">
+      <label class="campo">
+        <span>Precio</span>
+        <input formControlName="precio" type="number" min="0" step="0.01" />
+        <label class="check pequeno"><input type="checkbox" formControlName="precioDesde" /> Es precio "desde"</label>
+      </label>
+      <label class="campo">
+        <span>Categoría</span>
+        <input formControlName="categoria" list="categorias-producto" placeholder="Tacos" />
+        <datalist id="categorias-producto">
+          @for (c of categorias(); track c) {
+            <option [value]="c"></option>
+          }
+        </datalist>
+      </label>
+    </div>
+    @if (form.controls.tipo.value === 'servicio') {
+      <label class="campo">
+        <span>Duración (minutos)</span>
+        <input formControlName="duracionMin" type="number" min="5" step="5" />
+        <small>El bloque Agendar cita aparta este tiempo.</small>
+      </label>
+    }
+    <label class="campo">
+      <span>Descripción (se ve en WhatsApp)</span>
+      <textarea formControlName="descripcion" rows="2"></textarea>
+    </label>
+    <label class="campo">
+      <span>Foto (URL)</span>
+      <input formControlName="imagenUrl" type="url" placeholder="https://…" />
+    </label>
+    <div class="fila">
+      <label class="campo">
+        <span>SKU / clave (opcional)</span>
+        <input formControlName="sku" />
+      </label>
+      <label class="campo">
+        <span>Orden en el catálogo</span>
+        <input formControlName="orden" type="number" />
+      </label>
+    </div>
+    <label class="check">
+      <input type="checkbox" formControlName="activo" />
+      Disponible (se muestra en el bot)
+    </label>
+    @if (enviado && form.invalid) {
+      <p class="error-campo">Escribe el nombre y un precio válido.</p>
+    }
+  </form>
+  <div pie>
+    <button type="button" class="btn" (click)="cancelar.emit()">Cancelar</button>
+    <button type="submit" form="form-producto" class="btn btn-primario" [disabled]="guardando()">{{ guardando() ? 'Guardando…' : 'Guardar' }}</button>
+  </div>
+</app-modal>

@@ -1,0 +1,9 @@
+<div class="fondo" (click)="cerrar.emit()"></div>
+<section class="caja" role="dialog" aria-modal="true" [attr.aria-label]="titulo()" [style.max-width.px]="ancho()">
+  <header>
+    <h2>{{ titulo() }}</h2>
+    <button type="button" class="btn btn-fantasma btn-icono" aria-label="Cerrar" (click)="cerrar.emit()"><app-icono nombre="cerrar" /></button>
+  </header>
+  <div class="cuerpo"><ng-content /></div>
+  <footer><ng-content select="[pie]" /></footer>
+</section>

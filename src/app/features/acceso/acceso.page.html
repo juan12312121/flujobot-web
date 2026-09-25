@@ -1,0 +1,72 @@
+<section class="presentacion">
+  <div class="marca">
+    <span class="logo"><app-icono nombre="logo" [tam]="20" [grosor]="2.2" /></span>
+    FlujoBot
+  </div>
+  <h1>El bot de WhatsApp de tu negocio, dibujado en minutos.</h1>
+  <p>Tiendas, salones, consultorios, talleres, escuelas… Arrastra bloques, conéctalos y publica: pedidos, citas, preguntas frecuentes o captura de prospectos, con los colores y el lenguaje de tu negocio.</p>
+  <ul>
+    <li>Editor visual de flujos</li>
+    <li>Pedidos, citas y prospectos</li>
+    <li>Tu marca y tus colores</li>
+    <li>Tareas repetitivas con n8n</li>
+  </ul>
+
+  <div class="chat" aria-hidden="true">
+    <div class="burbuja entrante">hola</div>
+    <div class="burbuja saliente">¡Hola! ¿En qué te ayudo?<br /><b>1.</b> Ver catálogo<br /><b>2.</b> Horarios<br /><b>3.</b> Asesor</div>
+    <div class="burbuja entrante">1</div>
+  </div>
+</section>
+
+<section class="formulario">
+  <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+    <h2>{{ titulo() }}</h2>
+    <p class="suave">
+      @if (registro()) {
+        ¿Ya tienes cuenta? <a routerLink="/entrar">Entra</a>
+      } @else {
+        ¿Tu empresa es nueva aquí? <a routerLink="/registro">Crea una cuenta</a>
+      }
+    </p>
+
+    @if (registro()) {
+      <label class="campo">
+        <span>Nombre de la empresa</span>
+        <input formControlName="empresa" autocomplete="organization" placeholder="Taquería Don Pepe" />
+      </label>
+      <span class="etiqueta">¿Qué tipo de negocio es?</span>
+      <div class="giros" role="radiogroup" aria-label="Tipo de negocio">
+        @for (g of giros; track g.id) {
+          <button type="button" role="radio" [attr.aria-checked]="giro() === g.id" [class.elegido]="giro() === g.id" (click)="giro.set(g.id)">
+            <span class="icono"><app-icono [nombre]="g.icono" [tam]="20" /></span>
+            <strong>{{ g.nombre }}</strong>
+            <small>{{ g.ejemplo }}</small>
+          </button>
+        }
+      </div>
+      <label class="campo">
+        <span>Tu nombre</span>
+        <input formControlName="nombre" autocomplete="name" />
+      </label>
+    }
+    <label class="campo">
+      <span>Correo</span>
+      <input formControlName="email" type="email" autocomplete="email" />
+    </label>
+    <label class="campo">
+      <span>Contraseña</span>
+      <input formControlName="password" type="password" [autocomplete]="registro() ? 'new-password' : 'current-password'" />
+      @if (registro()) {
+        <small>Mínimo 8 caracteres</small>
+      }
+    </label>
+
+    @if (error()) {
+      <p class="error-campo" role="alert">{{ error() }}</p>
+    }
+    <button class="btn btn-primario ancho" type="submit" [disabled]="enviando()">
+      {{ enviando() ? 'Un momento…' : registro() ? 'Crear empresa' : 'Entrar' }}
+    </button>
+  </form>
+</section>

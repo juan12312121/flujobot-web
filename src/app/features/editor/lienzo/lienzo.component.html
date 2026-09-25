@@ -1,0 +1,33 @@
+<div #papel class="papel"></div>
+
+@if (resultados(); as r) {
+  <div class="resumen-resultados" role="status">
+    <app-icono nombre="rejilla" [tam]="18" />
+    <div>
+      <strong>{{ r.conversaciones }} {{ r.conversaciones === 1 ? 'conversación' : 'conversaciones' }} en los últimos {{ r.dias }} días</strong>
+      <p>Los números dicen cuántas pasaron por cada bloque y flecha. En rojo, dónde se quedaron sin contestar más de {{ r.abandonoMinutos }} minutos.</p>
+    </div>
+  </div>
+}
+
+@if (paso(); as p) {
+  <div class="narrador" [class.error]="p.error" [class.espera]="p.espera" role="status" aria-live="polite">
+    <span class="icono" [style.background]="tipos[p.tipo].color">
+      <app-icono [nombre]="tipos[p.tipo].icono" [tam]="16" [grosor]="2.2" />
+    </span>
+    <div>
+      <strong>{{ tipos[p.tipo].nombre }}</strong>
+      <p>{{ p.texto }}</p>
+    </div>
+    @if (p.espera) {
+      <span class="esperando">Esperando al cliente</span>
+    }
+  </div>
+}
+
+<div class="zoom">
+  <button type="button" class="btn btn-icono" title="Acercar" (click)="zoom(1.15)"><app-icono nombre="mas" /></button>
+  <button type="button" class="btn btn-icono" title="Alejar" (click)="zoom(1 / 1.15)"><app-icono nombre="menos" /></button>
+  <button type="button" class="btn btn-chico" title="Ver todo el flujo" (click)="ajustar()"><app-icono nombre="ajustar" [tam]="15" /> Ajustar</button>
+</div>
+<p class="pista">Arrastra bloques desde la izquierda · une las salidas (puntos a la derecha) con la entrada de otro bloque · rueda = zoom · arrastra el fondo para moverte</p>

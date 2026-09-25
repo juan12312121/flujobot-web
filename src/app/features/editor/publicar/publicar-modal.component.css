@@ -1,0 +1,45 @@
+.exito {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: var(--primario-claro);
+}
+
+.exito > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--primario);
+  color: #fff;
+  font-weight: 700;
+}
+
+.exito p {
+  margin: 2px 0 0;
+}
+
+.url {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f2f4f7;
+  word-break: break-all;
+}
+
+code {
+  background: #f2f4f7;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.aviso {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--aviso-claro);
+  color: var(--aviso);
+}

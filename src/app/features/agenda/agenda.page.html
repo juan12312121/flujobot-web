@@ -1,0 +1,82 @@
+<div class="pagina">
+  <div class="encabezado-pagina">
+    <div>
+      <h1>{{ sesion.terminos().citas }}</h1>
+      <p>Las que agenda el bot por WhatsApp y las que capturas tú. Horario en "Mi empresa".</p>
+    </div>
+    <button type="button" class="btn btn-primario" (click)="abrirNueva()">+ Nueva {{ sesion.terminos().cita.toLowerCase() }}</button>
+  </div>
+
+  <div class="navegacion">
+    <button type="button" class="btn btn-chico" (click)="mover(-7)"><app-icono nombre="izquierda" [tam]="15" /> Semana anterior</button>
+    <button type="button" class="btn btn-chico" (click)="mover(0)">Hoy</button>
+    <button type="button" class="btn btn-chico" (click)="mover(7)">Semana siguiente <app-icono nombre="derecha" [tam]="15" /></button>
+    <span class="suave">{{ total() }} {{ sesion.terminos().citas.toLowerCase() }}</span>
+    <label class="check"><input type="checkbox" [checked]="ocultarCanceladas()" (change)="ocultarCanceladas.set($any($event.target).checked)" /> Ocultar canceladas</label>
+  </div>
+
+  <div class="semana" [class.cargando]="cargando()">
+    @for (d of dias(); track d.fecha) {
+      <section class="tarjeta dia">
+        <header>
+          <h2>{{ d.titulo }}</h2>
+          <button type="button" class="btn btn-fantasma btn-icono" [title]="'Agendar el ' + d.titulo" (click)="abrirNueva(d.fecha)"><app-icono nombre="mas" [tam]="16" /></button>
+        </header>
+        @for (c of d.citas; track c.id) {
+          <article class="cita" [attr.data-estado]="c.estado">
+            <div class="hora">{{ hora(c.inicio) }}<small>{{ hora(c.fin) }}</small></div>
+            <div class="info">
+              <strong>{{ c.nombreContacto || 'Sin nombre' }}</strong>
+              @if (c.servicio) {
+                <span>{{ c.servicio }}</span>
+              }
+              <small class="suave">
+                {{ c.folio }} · {{ c.canal === 'panel' ? 'capturada a mano' : 'por WhatsApp' }}
+                @if (c.contacto) {
+                  · +{{ c.contacto }}
+                }
+              </small>
+            </div>
+            <select [value]="c.estado" (change)="cambiarEstado(c, $any($event.target).value)" [attr.aria-label]="'Estado de ' + c.folio">
+              @for (e of estados; track e.valor) {
+                <option [value]="e.valor">{{ e.texto }}</option>
+              }
+            </select>
+          </article>
+        } @empty {
+          <p class="libre">Sin {{ sesion.terminos().citas.toLowerCase() }}</p>
+        }
+      </section>
+    }
+  </div>
+</div>
+
+@if (creando()) {
+  <app-modal [titulo]="'Nueva ' + sesion.terminos().cita.toLowerCase()" [ancho]="520" (cerrar)="creando.set(false)">
+    <form [formGroup]="form" (ngSubmit)="crear()" id="form-cita">
+      <label class="campo"><span>{{ sesion.terminos().cliente }}</span><input formControlName="nombreContacto" appAutoEnfocar /></label>
+      <div class="fila">
+        <label class="campo"><span>Fecha</span><input type="date" formControlName="fecha" /></label>
+        <label class="campo"><span>Hora</span><input type="time" formControlName="hora" /></label>
+      </div>
+      <div class="fila">
+        <label class="campo">
+          <span>{{ sesion.terminos().item }}</span>
+          <input formControlName="servicio" list="servicios-agenda" />
+          <datalist id="servicios-agenda">
+            @for (s of servicios(); track s) {
+              <option [value]="s"></option>
+            }
+          </datalist>
+        </label>
+        <label class="campo"><span>Duración (min)</span><input type="number" min="5" formControlName="duracionMin" /></label>
+      </div>
+      <label class="campo"><span>WhatsApp / teléfono (opcional)</span><input formControlName="contacto" inputmode="tel" /></label>
+      <label class="campo"><span>Notas</span><textarea formControlName="notas" rows="2"></textarea></label>
+    </form>
+    <div pie>
+      <button type="button" class="btn" (click)="creando.set(false)">Cancelar</button>
+      <button type="submit" form="form-cita" class="btn btn-primario" [disabled]="form.invalid || guardando()">Agendar</button>
+    </div>
+  </app-modal>
+}

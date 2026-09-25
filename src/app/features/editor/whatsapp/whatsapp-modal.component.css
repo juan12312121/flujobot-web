@@ -1,0 +1,40 @@
+img {
+  display: block;
+  width: 260px;
+  height: 260px;
+  margin: 8px auto;
+  image-rendering: pixelated;
+}
+
+.centro {
+  text-align: center;
+}
+
+.error {
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--peligro-claro);
+  color: var(--peligro);
+}
+
+.listo {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.ok {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primario-claro);
+  color: var(--primario-osc);
+  font-size: 24px;
+}
+
+code {
+  background: #f2f4f7;
+  padding: 1px 5px;
+  border-radius: 4px;
+}

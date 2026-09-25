@@ -1,0 +1,297 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.barra .insignia {
+  margin-right: auto;
+}
+
+.velocidad {
+  width: auto;
+  min-height: 30px;
+  padding: 3px 8px;
+  font-size: 12.5px;
+}
+
+.demo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 12px 0;
+  padding: 9px 12px;
+  border: 1.5px dashed color-mix(in srgb, var(--primario) 55%, transparent);
+  border-radius: 10px;
+  background: var(--primario-claro);
+  color: var(--primario-osc);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.demo:hover {
+  border-style: solid;
+}
+
+.demo.activa {
+  border-color: var(--peligro);
+  background: var(--peligro-claro);
+  color: var(--peligro);
+}
+
+.chat {
+  flex: 1;
+  min-height: 160px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 14px 12px;
+  background: #efeae2;
+}
+
+.bienvenida {
+  margin: auto 8px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 85%);
+  color: #344054;
+  text-align: center;
+  font-size: 13px;
+}
+
+.bienvenida p {
+  margin: 6px 0 0;
+}
+
+.sistema {
+  align-self: center;
+  max-width: 92%;
+  margin: 4px 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #fff8c5;
+  color: #54432a;
+  font-size: 12px;
+  text-align: center;
+}
+
+.burbuja {
+  align-self: flex-start;
+  max-width: 88%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 8%);
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  animation: aparece 0.2s ease-out;
+}
+
+.burbuja.yo {
+  align-self: flex-end;
+  background: #d9fdd3;
+}
+
+.burbuja img {
+  display: block;
+  max-width: 100%;
+  max-height: 160px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+}
+
+.escribiendo {
+  display: flex;
+  gap: 4px;
+  padding: 10px 12px;
+}
+
+.escribiendo span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #98a2b3;
+  animation: brinco 1s infinite;
+}
+
+.escribiendo span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.escribiendo span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes brinco {
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes aparece {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.rapidas {
+  padding: 8px 12px 0;
+  background: #f0f2f5;
+}
+
+.etiqueta-rapidas {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--suave);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sugerencia {
+  max-width: 100%;
+  padding: 6px 11px;
+  border: 1px solid color-mix(in srgb, var(--primario) 40%, var(--borde));
+  border-radius: 999px;
+  background: #fff;
+  color: var(--primario-osc);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 550;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sugerencia:hover:not(:disabled) {
+  background: var(--primario-claro);
+}
+
+.sugerencia:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.escribir {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px 12px;
+  background: #f0f2f5;
+}
+
+.escribir textarea {
+  min-height: 36px;
+  max-height: 100px;
+  resize: none;
+  border-radius: 18px;
+  padding: 8px 14px;
+}
+
+.escribir .btn {
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.que-paso,
+.depurar {
+  padding: 8px 12px 10px;
+  border-top: 1px solid var(--borde);
+  font-size: 12.5px;
+}
+
+.que-paso summary,
+.depurar summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #344054;
+}
+
+.que-paso ol {
+  max-height: 190px;
+  margin: 8px 0 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.que-paso li button {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 6px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--texto);
+  cursor: pointer;
+}
+
+.que-paso li button:hover {
+  background: var(--superficie-2);
+}
+
+.que-paso li.actual button {
+  background: var(--primario-claro);
+}
+
+.que-paso li.error .texto {
+  color: var(--peligro);
+}
+
+.que-paso .icono {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.que-paso .texto {
+  line-height: 1.35;
+}
+
+.depurar {
+  max-height: 180px;
+  overflow: auto;
+}
+
+.depurar ul {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+
+.depurar pre {
+  margin: 6px 0 0;
+  white-space: pre-wrap;
+  font-size: 11px;
+}

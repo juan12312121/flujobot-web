@@ -1,0 +1,105 @@
+.rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.bot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+}
+
+.arriba {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--primario-claro);
+  font-size: 20px;
+}
+
+.info {
+  min-width: 0;
+}
+
+.info small {
+  font-family: ui-monospace, monospace;
+  font-size: 11.5px;
+}
+
+.insignias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pie {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.pie a {
+  text-decoration: none;
+}
+
+.pie .btn-peligro {
+  margin-left: auto;
+}
+
+.plantillas {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin: 6px 0 8px;
+}
+
+.plantillas button {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border: 1.5px solid var(--borde);
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.plantillas button.elegida {
+  border-color: var(--primario);
+  background: var(--primario-claro);
+}
+
+.plantillas small {
+  color: var(--suave);
+  font-size: 12px;
+}
+
+.plantillas .insignia {
+  justify-self: start;
+  align-self: flex-start;
+  font-size: 10.5px;
+}
+
+.acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.acciones.centradas {
+  justify-content: center;
+  margin-top: 14px;
+}

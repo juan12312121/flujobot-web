@@ -1,0 +1,130 @@
+<header class="barra">
+  <a routerLink="/bots" class="btn btn-fantasma btn-icono" title="Volver a bots" aria-label="Volver a bots"><app-icono nombre="regresar" /></a>
+  <div class="titulo">
+    <h1>{{ store.bot()?.nombre ?? 'Cargando…' }}</h1>
+    <span class="estado" [class.error]="store.estadoGuardado() === 'error'">
+      {{ textoGuardado() }}
+      @if (store.bot(); as bot) {
+        · @if (bot.publicado) {
+          publicado v{{ bot.publicado.version }}{{ bot.cambiosSinPublicar ? ' (hay cambios sin publicar)' : '' }}
+        } @else {
+          sin publicar
+        }
+      }
+    </span>
+  </div>
+
+  <div class="acciones">
+    @if (store.errores().length) {
+      <button type="button" class="insignia insignia-roja boton-insignia" (click)="pestana.set('revision')">
+        {{ store.errores().length }} {{ store.errores().length === 1 ? 'error' : 'errores' }}
+      </button>
+    }
+    @if (store.antesDelAsistente()) {
+      <button type="button" class="btn btn-fantasma" (click)="store.deshacerAsistente()">
+        <app-icono nombre="regresar" [tam]="15" /> Deshacer cambio del asistente
+      </button>
+    }
+    @if (store.resultados()) {
+      <select class="dias" [value]="'' + store.diasResultados()" (change)="cambiarDias($event)" aria-label="Periodo de los resultados">
+        <option value="7">Últimos 7 días</option>
+        <option value="30">Últimos 30 días</option>
+        <option value="90">Últimos 90 días</option>
+      </select>
+    }
+    <button type="button" class="btn" [class.btn-activo]="store.resultados()" [disabled]="store.cargandoResultados()" title="Cuántos clientes pasan por cada bloque y dónde se van" (click)="alternarResultados()">
+      <app-icono nombre="rejilla" [tam]="15" /> {{ store.resultados() ? 'Ocultar resultados' : 'Resultados' }}
+    </button>
+    <button type="button" class="btn" title="Pon el chat en tu página web o comparte un enlace" (click)="verChatWeb.set(true)">
+      <app-icono nombre="chat" [tam]="15" /> Chat web
+    </button>
+    <button type="button" class="btn" title="Describe con tus palabras qué cambiar y el asistente lo arma" (click)="verAsistente.set(true)">
+      <app-icono nombre="destellos" [tam]="15" /> Asistente
+    </button>
+    <button type="button" class="btn" [class.btn-activo]="pestana() === 'probar'" title="Platica con tu bot y mira en el lienzo lo que hace" (click)="pestana.set('probar')">
+      <app-icono nombre="play" [tam]="15" />
+      Probar
+    </button>
+    <button type="button" class="btn" (click)="verWhatsapp.set(true)">
+      <app-icono nombre="telefono" [tam]="16" />
+      <span class="punto-wa" [class.on]="store.bot()?.whatsapp === 'conectado'"></span>
+      {{ store.bot()?.whatsapp === 'conectado' ? 'WhatsApp conectado' : 'Conectar WhatsApp' }}
+    </button>
+    <button type="button" class="btn btn-primario" [disabled]="store.publicando() || cargando()" (click)="publicar()">
+      {{ store.publicando() ? 'Publicando…' : 'Publicar' }}
+    </button>
+  </div>
+</header>
+
+<div class="cuerpo">
+  <app-paleta [hayInicio]="store.hayInicio()" (agregar)="agregarDesdePaleta($event)" />
+
+  @if (!cargando()) {
+    <div class="zona-lienzo">
+      <app-lienzo />
+      @if (lienzoVacio()) {
+        <div class="invitacion">
+          <app-icono nombre="destellos" [tam]="30" />
+          <h2>¿Empezamos?</h2>
+          <p>Describe con tus palabras qué debe hacer tu bot y el asistente arma los bloques por ti. O arrastra bloques desde la izquierda.</p>
+          <button type="button" class="btn btn-primario" (click)="verAsistente.set(true)"><app-icono nombre="destellos" [tam]="16" /> Describir mi bot</button>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="cargando">Cargando flujo…</div>
+  }
+
+  <aside class="panel">
+    <nav role="tablist">
+      <button type="button" role="tab" [class.activa]="pestana() === 'bloque'" (click)="pestana.set('bloque')">Bloque</button>
+      <button type="button" role="tab" [class.activa]="pestana() === 'probar'" (click)="pestana.set('probar')">Probar</button>
+      <button type="button" role="tab" [class.activa]="pestana() === 'revision'" (click)="pestana.set('revision')">
+        Revisión
+        @if (store.problemas().length) {
+          <span class="contador" [class.rojo]="store.errores().length">{{ store.problemas().length }}</span>
+        }
+      </button>
+    </nav>
+
+    <div class="contenido">
+      <!-- El simulador se queda montado para no perder la conversación al cambiar de pestaña -->
+      <app-simulador [hidden]="pestana() !== 'probar'" />
+      @if (pestana() === 'bloque') {
+        <app-inspector />
+      } @else if (pestana() === 'revision') {
+        <div class="revision">
+          @if (store.problemas().length === 0) {
+            <p class="todo-bien"><app-icono nombre="check" [tam]="16" /> El flujo no tiene problemas. Listo para publicar.</p>
+          }
+          @for (p of store.errores(); track $index) {
+            <button type="button" class="problema error" (click)="irAProblema(p.nodoId)">{{ p.mensaje }}</button>
+          }
+          @for (p of avisosRevision(); track $index) {
+            <button type="button" class="problema" (click)="irAProblema(p.nodoId)">{{ p.mensaje }}</button>
+          }
+          <p class="suave nota">Los errores impiden publicar. Los avisos (en ámbar) no, pero conviene revisarlos: una salida sin conectar termina la conversación.</p>
+        </div>
+      }
+    </div>
+  </aside>
+</div>
+
+@if (verWhatsapp() && store.bot(); as bot) {
+  <app-whatsapp-modal [botId]="bot.id" (cerrar)="alCerrarWhatsapp($event)" />
+}
+@if (verChatWeb() && store.bot(); as bot) {
+  <app-chat-web-modal [botId]="bot.id" [publicado]="!!bot.publicado" (cerrar)="verChatWeb.set(false)" />
+}
+@if (verAsistente()) {
+  <app-asistente-modal
+    [modo]="lienzoVacio() ? 'crear' : 'modificar'"
+    [pedirNombre]="false"
+    [base]="{ nodos: store.nodos(), conexiones: store.conexiones() }"
+    (aplicar)="aplicarAsistente($event)"
+    (cerrar)="verAsistente.set(false)"
+  />
+}
+@if (publicado(); as r) {
+  <app-publicar-modal [resultado]="r" (cerrar)="publicado.set(null)" (descargar)="descargarWorkflow()" />
+}

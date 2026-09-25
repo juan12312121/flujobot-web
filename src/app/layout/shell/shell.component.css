@@ -1,0 +1,162 @@
+:host {
+  display: flex;
+  min-height: 100vh;
+}
+
+aside {
+  position: sticky;
+  top: 0;
+  width: 236px;
+  height: 100vh;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--menu);
+  color: var(--menu-texto);
+  transition: background 0.2s;
+  padding: 18px 12px;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 20px;
+}
+
+.marca strong {
+  display: block;
+  color: var(--menu-fuerte);
+  font-size: 14.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+.marca > div {
+  min-width: 0;
+}
+
+.marca small {
+  display: block;
+  color: var(--menu-suave);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+nav a:hover {
+  background: var(--menu-hover);
+  color: var(--menu-fuerte);
+}
+
+nav a.activo {
+  background: color-mix(in srgb, var(--primario) 22%, transparent);
+  color: var(--menu-fuerte);
+  box-shadow: inset 3px 0 0 var(--primario);
+}
+
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 6px 0;
+  border-top: 1px solid var(--menu-borde);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--menu-hover);
+  color: var(--menu-fuerte);
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.quien {
+  flex: 1;
+  min-width: 0;
+}
+
+.quien strong {
+  display: block;
+  color: var(--menu-fuerte);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quien small {
+  color: var(--menu-suave);
+  font-size: 11.5px;
+}
+
+.usuario .btn {
+  color: var(--menu-texto);
+}
+
+.usuario .btn:hover {
+  background: var(--menu-hover);
+}
+
+main {
+  flex: 1;
+  min-width: 0;
+}
+
+.hamburguesa,
+.velo {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  aside {
+    position: fixed;
+    z-index: 300;
+    transform: translateX(-100%);
+    transition: transform 0.2s;
+  }
+
+  aside.abierto {
+    transform: none;
+  }
+
+  .velo.visible {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgb(0 0 0 / 35%);
+  }
+
+  .hamburguesa {
+    display: inline-flex;
+    margin: 14px 0 0 16px;
+  }
+}

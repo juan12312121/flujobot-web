@@ -1,0 +1,20 @@
+@for (grupo of grupos; track grupo) {
+  <h3>{{ grupo }}</h3>
+  @for (t of tiposDe(grupo); track t.tipo) {
+    <button
+      type="button"
+      class="bloque"
+      draggable="true"
+      [disabled]="t.tipo === 'inicio' && hayInicio()"
+      [title]="t.descripcion"
+      (dragstart)="alArrastrar($event, t.tipo)"
+      (click)="agregar.emit(t.tipo)"
+    >
+      <span class="icono" [style.background]="t.color"><app-icono [nombre]="t.icono" [tam]="16" [grosor]="2.2" /></span>
+      <span class="texto">
+        <strong>{{ t.nombre }}</strong>
+        <small>{{ t.descripcion }}</small>
+      </span>
+    </button>
+  }
+}

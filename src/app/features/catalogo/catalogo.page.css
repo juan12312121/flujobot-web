@@ -1,0 +1,54 @@
+.filtros {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.filtros input {
+  max-width: 320px;
+}
+
+.filtros select {
+  max-width: 220px;
+}
+
+.foto {
+  width: 52px;
+}
+
+.foto img, .foto span {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #f2f4f7;
+  font-weight: 700;
+  color: var(--suave);
+}
+
+td small {
+  display: block;
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inactivo td:not(.acciones) {
+  opacity: .55;
+}
+
+.boton {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.acciones {
+  text-align: right;
+  white-space: nowrap;
+}

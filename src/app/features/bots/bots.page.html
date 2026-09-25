@@ -1,0 +1,91 @@
+<div class="pagina">
+  <div class="encabezado-pagina">
+    <div>
+      <h1>Bots de WhatsApp</h1>
+      <p>Cada bot es un número de WhatsApp con su propio flujo. Se ejecuta en n8n.</p>
+    </div>
+    <div class="acciones">
+      <button type="button" class="btn" (click)="abrirCrear()"><app-icono nombre="mas" [tam]="16" /> Desde plantilla</button>
+      <button type="button" class="btn btn-primario" (click)="conAsistente.set(true)"><app-icono nombre="destellos" [tam]="16" /> Crear con el asistente</button>
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <p class="suave">Cargando…</p>
+  } @else if (bots().length === 0) {
+    <div class="tarjeta vacio">
+      <h2>Aún no tienes bots</h2>
+      <p>Cuéntale al asistente qué necesitas y te lo arma, o empieza con una plantilla para tu tipo de negocio.</p>
+      <div class="acciones centradas">
+        <button type="button" class="btn btn-primario" (click)="conAsistente.set(true)"><app-icono nombre="destellos" [tam]="16" /> Describir mi bot</button>
+        <button type="button" class="btn" (click)="abrirCrear()">Usar una plantilla</button>
+      </div>
+    </div>
+  } @else {
+    <div class="rejilla">
+      @for (bot of bots(); track bot.id) {
+        <article class="tarjeta bot">
+          <div class="arriba">
+            <span class="avatar"><app-icono nombre="bot" [tam]="22" /></span>
+            <div class="info">
+              <h2>{{ bot.nombre }}</h2>
+              <small class="suave">{{ bot.instancia }}</small>
+            </div>
+          </div>
+          <div class="insignias">
+            @if (bot.publicado) {
+              <span class="insignia insignia-verde"><span class="punto"></span>Publicado v{{ bot.publicado.version }}</span>
+            } @else {
+              <span class="insignia">Borrador</span>
+            }
+            @if (bot.cambiosSinPublicar && bot.publicado) {
+              <span class="insignia insignia-ambar">Cambios sin publicar</span>
+            }
+            <span class="insignia" [class.insignia-verde]="bot.whatsapp === 'conectado'">
+              WhatsApp {{ bot.whatsapp === 'conectado' ? 'conectado' : 'sin conectar' }}
+            </span>
+          </div>
+          <small class="suave">Editado {{ bot.updatedAt | date: 'd MMM, HH:mm' }}</small>
+          <div class="pie">
+            <a class="btn btn-primario btn-chico" [routerLink]="['/bots', bot.id, 'editor']">Abrir editor</a>
+            <a class="btn btn-chico" routerLink="/conversaciones" [queryParams]="{ bot: bot.id }">Conversaciones</a>
+            @if (sesion.esAdmin()) {
+              <button type="button" class="btn btn-chico btn-fantasma btn-peligro" (click)="borrar(bot)">Borrar</button>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</div>
+
+@if (creando()) {
+  <app-modal titulo="Nuevo bot" [ancho]="520" (cerrar)="creando.set(false)">
+    <label class="campo">
+      <span>Nombre</span>
+      <input [value]="nuevo().nombre" (input)="nombre($event)" (keydown.enter)="crear()" placeholder="Pedidos por WhatsApp" appAutoEnfocar />
+    </label>
+    <span class="etiqueta">Empezar con</span>
+    <div class="plantillas">
+      @for (p of plantillas; track p.id) {
+        <button type="button" [class.elegida]="nuevo().plantilla === p.id" (click)="plantilla(p.id)">
+          <strong><app-icono [nombre]="p.icono" [tam]="16" /> {{ p.nombre }}</strong>
+          @if (esRecomendada(p.id)) {
+            <span class="insignia insignia-verde">Recomendada</span>
+          }
+          <small>{{ p.descripcion }}</small>
+        </button>
+      }
+    </div>
+    <div pie>
+      <button type="button" class="btn" (click)="creando.set(false)">Cancelar</button>
+      <button type="button" class="btn btn-primario" [disabled]="!nuevo().nombre.trim() || guardando()" (click)="crear()">
+        {{ guardando() ? 'Creando…' : 'Crear y abrir editor' }}
+      </button>
+    </div>
+  </app-modal>
+}
+
+@if (conAsistente()) {
+  <app-asistente-modal modo="crear" (aplicar)="crearConAsistente($event)" (cerrar)="conAsistente.set(false)" />
+}

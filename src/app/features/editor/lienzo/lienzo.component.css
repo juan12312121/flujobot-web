@@ -1,0 +1,142 @@
+:host {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: #f7f8fa;
+}
+
+.papel {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+}
+
+.papel:active {
+  cursor: grabbing;
+}
+
+.zoom {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  gap: 6px;
+}
+
+.zoom .btn {
+  box-shadow: var(--sombra);
+}
+
+.pista {
+  position: absolute;
+  left: 14px;
+  bottom: 10px;
+  margin: 0;
+  font-size: 11.5px;
+  color: #98a2b3;
+  pointer-events: none;
+}
+
+@media (max-width: 1100px) {
+  .pista {
+    display: none;
+  }
+}
+
+/* Cartel que narra, en lenguaje sencillo, lo que hace el bot durante la simulación */
+.narrador {
+  position: absolute;
+  left: 50%;
+  top: 16px;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: min(560px, calc(100% - 32px));
+  padding: 11px 14px;
+  border: 1px solid var(--borde);
+  border-left: 4px solid var(--primario);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--sombra-alta);
+  animation: narrador-entra 0.25s ease-out;
+}
+
+.narrador.error {
+  border-left-color: var(--peligro);
+}
+
+.narrador .icono {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.narrador div {
+  flex: 1;
+  min-width: 0;
+}
+
+.narrador strong {
+  font-size: 12px;
+  color: var(--suave);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.narrador p {
+  margin: 2px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.esperando {
+  align-self: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--aviso-claro);
+  color: var(--aviso);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@keyframes narrador-entra {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -6px);
+  }
+}
+
+.resumen-resultados {
+  position: absolute;
+  left: 50%;
+  top: 16px;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  width: min(560px, calc(100% - 32px));
+  padding: 10px 14px;
+  border: 1px solid var(--borde);
+  border-left: 4px solid #101828;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--sombra);
+}
+
+.resumen-resultados div {
+  flex: 1;
+}
+
+.resumen-resultados p {
+  margin: 2px 0 0;
+  color: var(--suave);
+  font-size: 12.5px;
+}

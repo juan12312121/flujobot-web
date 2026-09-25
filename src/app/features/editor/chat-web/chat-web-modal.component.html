@@ -1,0 +1,50 @@
+<app-modal titulo="Chat web" [ancho]="600" (cerrar)="cerrar.emit()">
+  @if (web(); as w) {
+    <p class="intro">
+      <app-icono nombre="chat" [tam]="18" />
+      Pon un botón de chat en tu página web o comparte un enlace. Tus clientes platican con el mismo bot, sin necesidad de WhatsApp.
+    </p>
+
+    @if (!publicado()) {
+      <p class="aviso"><app-icono nombre="alerta" [tam]="16" /> Primero publica el bot: el chat web usa la versión publicada.</p>
+    }
+
+    <label class="check interruptor">
+      <input type="checkbox" [checked]="w.activo" [disabled]="guardando()" (change)="alternar($event)" />
+      <span><b>{{ w.activo ? 'Chat web encendido' : 'Chat web apagado' }}</b><small>Apagado, el botón no aparece en la página.</small></span>
+    </label>
+
+    <div class="fila">
+      <label class="campo">
+        <span>Título del chat</span>
+        <input [value]="w.titulo" maxlength="60" placeholder="El nombre de tu negocio" (change)="texto('titulo', $event)" />
+      </label>
+      <label class="campo">
+        <span>Primer mensaje</span>
+        <input [value]="w.saludo" maxlength="200" placeholder="¡Hola! Escríbenos y te respondemos al momento." (change)="texto('saludo', $event)" />
+      </label>
+    </div>
+
+    <div class="bloque">
+      <span class="etiqueta">1. Para tu página web</span>
+      <p class="ayuda">Pega esto antes de <code>&lt;/body&gt;</code> (o pídeselo a quien hizo tu página). Aparecerá un botón de chat abajo a la derecha.</p>
+      <pre>{{ codigo() }}</pre>
+      <button type="button" class="btn btn-chico" (click)="copiar(codigo(), 'Código')"><app-icono nombre="duplicar" [tam]="15" /> Copiar código</button>
+    </div>
+
+    <div class="bloque">
+      <span class="etiqueta">2. Enlace directo</span>
+      <p class="ayuda">Para tu Instagram, Facebook, Google Maps o una tarjeta con código QR.</p>
+      <div class="enlace">
+        <code>{{ enlace() }}</code>
+        <button type="button" class="btn btn-chico" (click)="copiar(enlace(), 'Enlace')"><app-icono nombre="duplicar" [tam]="15" /> Copiar</button>
+        <a class="btn btn-chico" [href]="enlace()" target="_blank" rel="noopener"><app-icono nombre="derecha" [tam]="15" /> Abrir</a>
+      </div>
+    </div>
+  } @else {
+    <p class="suave">Cargando…</p>
+  }
+  <div pie>
+    <button type="button" class="btn btn-primario" (click)="cerrar.emit()">Listo</button>
+  </div>
+</app-modal>

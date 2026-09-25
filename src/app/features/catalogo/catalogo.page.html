@@ -1,0 +1,81 @@
+<div class="pagina">
+  <div class="encabezado-pagina">
+    <div>
+      <h1>{{ t().items }}</h1>
+      <p>Lo que el bloque "Catálogo" muestra por WhatsApp. Lo que marques como oculto no aparece.</p>
+    </div>
+    <button type="button" class="btn btn-primario" (click)="editando.set('nuevo')">+ Agregar {{ t().item.toLowerCase() }}</button>
+  </div>
+
+  <div class="filtros">
+    <input type="search" [placeholder]="'Buscar ' + t().item.toLowerCase() + '…'" [value]="texto()" (input)="texto.set($any($event.target).value)" />
+    <select [value]="categoria()" (change)="categoria.set($any($event.target).value)">
+      <option value="">Todas las categorías</option>
+      @for (c of categorias(); track c) {
+        <option [value]="c">{{ c }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="tarjeta">
+    @if (cargando()) {
+      <p class="vacio">Cargando…</p>
+    } @else if (visibles().length === 0) {
+      <div class="vacio">
+        <h2>{{ productos().length ? 'Sin resultados' : 'Aún no hay ' + t().items.toLowerCase() }}</h2>
+        <p>{{ productos().length ? 'Prueba con otra búsqueda.' : 'Agrégalos para que el bot pueda mostrarlos.' }}</p>
+      </div>
+    } @else {
+      <table class="tabla">
+        <thead>
+          <tr><th></th><th>{{ t().item }}</th><th>Categoría</th><th class="num">Precio</th><th>Estado</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (p of visibles(); track p.id) {
+            <tr [class.inactivo]="!p.activo">
+              <td class="foto">
+                @if (p.imagenUrl) {
+                  <img [src]="p.imagenUrl" alt="" loading="lazy" />
+                } @else {
+                  <span>{{ p.nombre[0] }}</span>
+                }
+              </td>
+              <td>
+                <strong>{{ p.nombre }}</strong>
+                @if (p.tipo === 'servicio') {
+                  <span class="insignia insignia-azul">{{ p.duracionMin ? p.duracionMin + ' min' : 'servicio' }}</span>
+                }
+                @if (p.descripcion) {
+                  <small class="suave">{{ p.descripcion }}</small>
+                }
+              </td>
+              <td>{{ p.categoria || '—' }}</td>
+              <td class="num">{{ p.precioDesde ? 'desde ' : '' }}{{ p.precio | dinero }}</td>
+              <td>
+                <button type="button" class="insignia boton" [class.insignia-verde]="p.activo" (click)="alternar(p)" title="Cambiar disponibilidad">
+                  {{ p.activo ? 'Disponible' : 'Oculto' }}
+                </button>
+              </td>
+              <td class="acciones">
+                <button type="button" class="btn btn-chico" (click)="editando.set(p)">Editar</button>
+                <button type="button" class="btn btn-chico btn-fantasma btn-peligro" (click)="borrar(p)">Borrar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (editando(); as e) {
+  <app-producto-form
+    [producto]="e === 'nuevo' ? null : e"
+    [categorias]="categorias()"
+    [guardando]="guardando()"
+    [termino]="t().item"
+    [tipoInicial]="tipoInicial()"
+    (guardar)="guardar($event)"
+    (cancelar)="editando.set(null)"
+  />
+}

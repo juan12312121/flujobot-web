@@ -1,0 +1,29 @@
+<app-modal titulo="Conectar WhatsApp" [ancho]="420" (cerrar)="cerrar.emit(estado())">
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+    @if (noConfigurado()) {
+      <p class="suave">
+        Configura <code>EVOLUTION_URL</code> y <code>EVOLUTION_API_KEY</code> en el <code>.env</code> de la API. Mientras tanto puedes probar todo con el
+        simulador.
+      </p>
+    }
+  } @else if (estado() === 'conectado') {
+    <div class="listo">
+      <span class="ok"><app-icono nombre="check" [tam]="26" [grosor]="2.4" /></span>
+      <h3>WhatsApp conectado</h3>
+      <p class="suave">Publica el flujo para que el bot empiece a contestar.</p>
+    </div>
+  } @else if (qr()) {
+    <p>Abre WhatsApp en el teléfono del negocio → <b>Dispositivos vinculados</b> → <b>Vincular dispositivo</b> y escanea:</p>
+    <img [src]="qr()" alt="Código QR de WhatsApp" />
+    <p class="suave centro">Esperando que escanees…</p>
+  } @else {
+    <p class="suave centro">Pidiendo el código QR…</p>
+  }
+  <div pie>
+    @if (estado() === 'conectado') {
+      <button type="button" class="btn btn-peligro" (click)="desconectar()">Desvincular</button>
+    }
+    <button type="button" class="btn" (click)="cerrar.emit(estado())">Cerrar</button>
+  </div>
+</app-modal>

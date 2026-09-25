@@ -1,0 +1,106 @@
+<app-modal [titulo]="titulo()" [ancho]="620" (cerrar)="cerrar.emit()">
+  @switch (etapa()) {
+    @case ('escribir') {
+      <p class="intro">
+        <app-icono nombre="destellos" [tam]="18" />
+        @if (modo() === 'crear') {
+          Cuéntame con tus palabras qué quieres que haga tu bot. Yo armo los bloques y tú los ajustas después.
+        } @else {
+          Dime qué quieres cambiar o agregar. Reviso tu flujo actual y te propongo la nueva versión.
+        }
+      </p>
+
+      @if (necesitaNombre()) {
+        <label class="campo">
+          <span>Nombre del bot</span>
+          <input [value]="nombre()" (input)="escribir('nombre', $event)" placeholder="Citas por WhatsApp" appAutoEnfocar />
+        </label>
+      }
+      <label class="campo">
+        <span>{{ modo() === 'crear' ? '¿Qué debe hacer tu bot?' : '¿Qué quieres cambiar?' }}</span>
+        <textarea
+          rows="5"
+          [value]="descripcion()"
+          (input)="escribir('descripcion', $event)"
+          [placeholder]="modo() === 'crear' ? 'Ej. Que mis clientes agenden cita, vean precios y puedan hablar conmigo…' : 'Ej. Pide el correo antes de registrar la solicitud'"
+        ></textarea>
+        <small>Mientras más detalles des (qué preguntar, qué opciones mostrar, qué hacer al final), mejor queda.</small>
+      </label>
+
+      <span class="etiqueta">Ideas para empezar</span>
+      <div class="ejemplos">
+        @for (e of ejemplos(); track e) {
+          <button type="button" (click)="usarEjemplo(e)">{{ e }}</button>
+        }
+      </div>
+
+      @if (error()) {
+        <p class="error" role="alert"><app-icono nombre="alerta" [tam]="16" /> {{ error() }}</p>
+      }
+    }
+
+    @case ('pensando') {
+      <div class="pensando" role="status" aria-live="polite">
+        <span class="orbe"><app-icono nombre="destellos" [tam]="28" /></span>
+        <strong>{{ mensajeEspera() }}</strong>
+        <p class="suave">Esto tarda unos 20 a 40 segundos.</p>
+      </div>
+    }
+
+    @case ('propuesta') {
+      @if (propuesta(); as p) {
+        <div class="resumen">
+          <span class="etiqueta">Así funcionará tu bot</span>
+          <p>{{ p.resumen }}</p>
+        </div>
+
+        <span class="etiqueta">{{ p.nodos.length }} bloques</span>
+        <div class="bloques">
+          @for (b of bloques(); track b.tipo) {
+            <span class="bloque">
+              <span class="icono" [style.background]="b.color"><app-icono [nombre]="b.icono" [tam]="13" [grosor]="2.3" /></span>
+              {{ b.nombre }}@if (b.veces > 1) {<b>×{{ b.veces }}</b>}
+            </span>
+          }
+        </div>
+
+        @if (p.supuestos.length) {
+          <div class="supuestos">
+            <span class="etiqueta">Lo que supuse (revísalo en el lienzo)</span>
+            <ul>
+              @for (s of p.supuestos; track s) {
+                <li>{{ s }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        @if (errores().length) {
+          <p class="error"><app-icono nombre="alerta" [tam]="16" /> Quedaron {{ errores().length }} detalles por corregir; los verás marcados en rojo en el lienzo.</p>
+        } @else if (avisos().length) {
+          <p class="nota">Hay {{ avisos().length }} avisos menores (en ámbar en el lienzo), pero ya se puede probar.</p>
+        }
+        @if (modo() === 'modificar') {
+          <p class="nota">Al aplicar se reemplaza el flujo actual. Podrás deshacerlo con el botón "Deshacer cambio del asistente".</p>
+        }
+      }
+    }
+  }
+
+  <div pie>
+    @switch (etapa()) {
+      @case ('escribir') {
+        <button type="button" class="btn" (click)="cerrar.emit()">Cancelar</button>
+        <button type="button" class="btn btn-primario" [disabled]="!puedeGenerar()" (click)="generar()">
+          <app-icono nombre="destellos" [tam]="16" /> {{ modo() === 'crear' ? 'Armar mi bot' : 'Proponer cambios' }}
+        </button>
+      }
+      @case ('propuesta') {
+        <button type="button" class="btn" (click)="otraVez()"><app-icono nombre="regresar" [tam]="15" /> Cambiar la descripción</button>
+        <button type="button" class="btn btn-primario" [disabled]="aplicando()" (click)="confirmar()">
+          <app-icono nombre="check" [tam]="16" /> {{ necesitaNombre() ? 'Crear bot y abrir el editor' : 'Poner en el lienzo' }}
+        </button>
+      }
+    }
+  </div>
+</app-modal>

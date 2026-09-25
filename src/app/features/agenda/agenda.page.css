@@ -1,0 +1,117 @@
+.navegacion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.navegacion .check {
+  margin: 0 0 0 auto;
+}
+
+.semana {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 12px;
+  transition: opacity 0.15s;
+}
+
+.semana.cargando {
+  opacity: 0.55;
+}
+
+.dia {
+  padding: 12px;
+  min-height: 120px;
+}
+
+.dia header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.dia h2 {
+  font-size: 14px;
+}
+
+.dia h2::first-letter {
+  text-transform: uppercase;
+}
+
+.cita {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 10px;
+  margin-bottom: 6px;
+  border-radius: 9px;
+  background: var(--primario-claro);
+  border-left: 3px solid var(--primario);
+}
+
+.cita[data-estado='pendiente'] {
+  background: var(--aviso-claro);
+  border-left-color: #f79009;
+}
+
+.cita[data-estado='cancelada'],
+.cita[data-estado='no_asistio'] {
+  background: #f2f4f7;
+  border-left-color: #98a2b3;
+  opacity: 0.7;
+}
+
+.cita[data-estado='atendida'] {
+  background: #f2f4f7;
+  border-left-color: var(--primario-osc);
+}
+
+.hora {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.hora small {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--suave);
+}
+
+.info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.info span,
+.info small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+}
+
+.cita select {
+  width: auto;
+  min-height: 28px;
+  padding: 2px 6px;
+  font-size: 12px;
+  background: #fff;
+}
+
+.libre {
+  margin: 8px 0;
+  color: #98a2b3;
+  font-size: 12.5px;
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}

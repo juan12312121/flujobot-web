@@ -1,0 +1,295 @@
+@if (nodo(); as n) {
+  <header>
+    <span class="icono" [style.background]="tipo()!.color"><app-icono [nombre]="tipo()!.icono" [tam]="17" [grosor]="2.2" /></span>
+    <div>
+      <h2>{{ tipo()!.nombre }}</h2>
+      <small>{{ tipo()!.descripcion }}</small>
+    </div>
+  </header>
+
+  @for (p of problemas(); track p.mensaje) {
+    <p class="problema" [class.error]="p.nivel === 'error'">{{ p.mensaje }}</p>
+  }
+
+  @switch (n.tipo) {
+    @case ('inicio') {
+      <label class="campo">
+        <span>Palabras que inician el bot</span>
+        <input [value]="(n.datos.palabrasClave ?? []).join(', ')" (change)="lista('palabrasClave', $event)" placeholder="hola, menu, info" />
+        <small>Separadas por coma. Vacío = cualquier mensaje inicia el bot.</small>
+      </label>
+      <label class="campo">
+        <span>Palabras para volver a empezar</span>
+        <input [value]="(n.datos.palabrasReinicio ?? []).join(', ')" (change)="lista('palabrasReinicio', $event)" placeholder="reiniciar" />
+        <small>Si el cliente las escribe a media conversación, regresa al inicio.</small>
+      </label>
+      <label class="campo">
+        <span>Mensaje de bienvenida (opcional)</span>
+        <textarea [value]="n.datos.bienvenida ?? ''" (input)="texto('bienvenida', $event)"></textarea>
+      </label>
+      <label class="campo">
+        <span>Olvidar la conversación tras (minutos sin respuesta)</span>
+        <input type="number" min="1" [value]="n.datos.expiraMinutos ?? 60" (change)="numero('expiraMinutos', $event)" />
+      </label>
+    }
+
+    @case ('mensaje') {
+      <label class="campo">
+        <span>Texto</span>
+        <textarea rows="5" [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
+        <small>*negritas*, _cursivas_ y variables como {{ '{{nombre}}' }}</small>
+      </label>
+      <label class="campo">
+        <span>Imagen (URL, opcional)</span>
+        <input type="url" [value]="n.datos.imagenUrl ?? ''" (change)="texto('imagenUrl', $event)" placeholder="https://…" />
+      </label>
+    }
+
+    @case ('menu') {
+      <label class="campo">
+        <span>Pregunta del menú</span>
+        <textarea [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
+      </label>
+      <span class="etiqueta">Opciones (cada una es una salida)</span>
+      <ol class="opciones">
+        @for (o of opciones(); track o.id; let i = $index, primero = $first, ultimo = $last) {
+          <li>
+            <span class="numero">{{ i + 1 }}</span>
+            <input [value]="o.etiqueta" (input)="editarOpcion(i, $event)" [attr.aria-label]="'Opción ' + (i + 1)" />
+            <button type="button" class="btn btn-fantasma btn-icono" title="Subir" [disabled]="primero" (click)="moverOpcion(i, -1)"><app-icono nombre="arriba" [tam]="16" /></button>
+            <button type="button" class="btn btn-fantasma btn-icono" title="Bajar" [disabled]="ultimo" (click)="moverOpcion(i, 1)"><app-icono nombre="abajo" [tam]="16" /></button>
+            <button type="button" class="btn btn-fantasma btn-icono btn-peligro" title="Quitar" (click)="quitarOpcion(i)"><app-icono nombre="cerrar" [tam]="16" /></button>
+          </li>
+        }
+      </ol>
+      <button type="button" class="btn btn-chico" (click)="agregarOpcion()">+ Agregar opción</button>
+      <label class="check separado">
+        <input type="checkbox" [checked]="n.datos.responderConIA ?? false" (change)="casilla('responderConIA', $event)" />
+        Si escriben una pregunta en vez de elegir, contestarla con IA
+      </label>
+      @if (n.datos.responderConIA) {
+        <p class="ayuda">Usa la información de "Mi empresa → Información para la IA" y luego vuelve a mostrar el menú.</p>
+      }
+      <label class="campo">
+        <span>Si responde algo que no está en el menú</span>
+        <input [value]="n.datos.error ?? ''" (change)="texto('error', $event)" placeholder="No entendí tu respuesta. Escribe el número de una opción." />
+      </label>
+    }
+
+    @case ('pregunta') {
+      <label class="campo">
+        <span>Pregunta</span>
+        <textarea [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
+      </label>
+      <label class="campo">
+        <span>Guardar la respuesta en la variable</span>
+        <input [value]="n.datos.variable ?? ''" (change)="texto('variable', $event)" placeholder="direccion" />
+        <small>Úsala después como {{ '{{' }}{{ n.datos.variable || 'variable' }}{{ '}}' }}</small>
+      </label>
+      <label class="campo">
+        <span>Tipo de dato</span>
+        <select [value]="n.datos.validacion ?? 'texto'" (change)="texto('validacion', $event)">
+          <option value="texto">Texto libre</option>
+          <option value="numero">Número</option>
+          <option value="email">Correo electrónico</option>
+          <option value="telefono">Teléfono</option>
+        </select>
+      </label>
+      <label class="campo">
+        <span>Si el dato no es válido</span>
+        <input [value]="n.datos.error ?? ''" (change)="texto('error', $event)" placeholder="Ese dato no parece válido, ¿lo intentas de nuevo?" />
+      </label>
+    }
+
+    @case ('catalogo') {
+      <label class="campo">
+        <span>Encabezado</span>
+        <input [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)" />
+      </label>
+      <label class="campo">
+        <span>¿Qué hace el cliente?</span>
+        <select [value]="n.datos.modo ?? 'carrito'" (change)="texto('modo', $event)">
+          <option value="carrito">Arma un carrito (varios, con cantidad)</option>
+          <option value="elegir">Elige uno (servicio, curso, propiedad…)</option>
+        </select>
+        <small>"Elige uno" guarda la elección en {{ '{{producto.nombre}}' }}; ideal antes de Agendar cita.</small>
+      </label>
+      <label class="campo">
+        <span>Mostrar productos de</span>
+        <select [value]="n.datos.categoria ?? ''" (change)="texto('categoria', $event)">
+          <option value="">Todas las categorías</option>
+          @for (c of store.categorias(); track c) {
+            <option [value]="c">{{ c }}</option>
+          }
+        </select>
+      </label>
+      <label class="campo">
+        <span>{{ n.datos.modo === 'elegir' ? 'Al elegir' : 'Al agregar un producto' }}</span>
+        <input [value]="n.datos.textoAgregado ?? ''" (change)="texto('textoAgregado', $event)" [placeholder]="n.datos.modo === 'elegir' ? 'Elegiste *{{producto.nombre}}*.' : 'Agregué *{{cantidad}} x {{producto.nombre}}*…'" />
+      </label>
+      <label class="check">
+        <input type="checkbox" [checked]="n.datos.mostrarImagen ?? false" (change)="casilla('mostrarImagen', $event)" />
+        Enviar la foto del producto elegido
+      </label>
+      <p class="ayuda">
+        @if (n.datos.modo === 'elegir') {
+          El cliente responde con el número y sale por "Agregó / eligió". Con <b>0</b> sale por "Terminó".
+        } @else {
+          El cliente responde con el número (y la cantidad: "2 3"). Con <b>0</b> termina y sale por "Terminó".
+        }
+      </p>
+    }
+
+    @case ('carrito') {
+      <label class="campo">
+        <span>Encabezado del resumen</span>
+        <input [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)" />
+      </label>
+      <label class="campo">
+        <span>Si el carrito está vacío</span>
+        <input [value]="n.datos.textoVacio ?? ''" (change)="texto('textoVacio', $event)" placeholder="Tu carrito está vacío." />
+      </label>
+    }
+
+    @case ('pedido') {
+      <label class="check">
+        <input type="checkbox" [checked]="n.datos.sinProductos ?? false" (change)="casilla('sinProductos', $event)" />
+        Registrar aunque no haya productos (solicitud, cotización, prospecto)
+      </label>
+      <label class="campo">
+        <span>Mensaje de confirmación</span>
+        <textarea rows="4" [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
+        <small>Se guarda con folio en "{{ terminos().pedidos }}" junto con las variables (nombre, correo…). Usa {{ '{{folio}}' }} y {{ '{{total}}' }}.</small>
+      </label>
+    }
+
+    @case ('cita') {
+      <label class="campo">
+        <span>Pregunta</span>
+        <input [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)" />
+      </label>
+      <div class="fila">
+        <label class="campo">
+          <span>Buscar en los próximos</span>
+          <input type="number" min="1" max="60" [value]="n.datos.diasAdelante ?? 14" (change)="numero('diasAdelante', $event)" />
+          <small>días</small>
+        </label>
+        <label class="campo">
+          <span>Duración (min)</span>
+          <input type="number" min="5" [value]="n.datos.duracionMin ?? ''" (change)="numero('duracionMin', $event)" placeholder="auto" />
+          <small>Vacío = la del servicio elegido</small>
+        </label>
+      </div>
+      <label class="campo">
+        <span>Servicio fijo (opcional)</span>
+        <input [value]="n.datos.servicio ?? ''" (change)="texto('servicio', $event)" placeholder="Consulta general" />
+        <small>Si antes hubo un Catálogo "elige uno", se usa lo que eligió.</small>
+      </label>
+      <label class="campo">
+        <span>Confirmación</span>
+        <textarea rows="3" [value]="n.datos.textoConfirmacion ?? ''" (input)="texto('textoConfirmacion', $event)" [placeholder]="'¡Listo! Tu cita quedó para el *{{cita.fecha}}* a las *{{cita.hora}}*.'"></textarea>
+      </label>
+      <label class="campo">
+        <span>Si no hay horarios libres</span>
+        <input [value]="n.datos.textoSinEspacio ?? ''" (change)="texto('textoSinEspacio', $event)" placeholder="Por ahora no tenemos horarios disponibles." />
+      </label>
+      <p class="ayuda">El cliente elige día y luego hora (con <b>0</b> regresa). Usa el horario de atención de "Mi empresa" y no empalma {{ terminos().citas.toLowerCase() }}.</p>
+    }
+
+    @case ('condicion') {
+      <label class="campo">
+        <span>Variable</span>
+        <input [value]="n.datos.variable ?? ''" (change)="texto('variable', $event)" list="variables-flujo" />
+      </label>
+      <label class="campo">
+        <span>Condición</span>
+        <select [value]="n.datos.operador ?? 'igual'" (change)="texto('operador', $event)">
+          <option value="igual">es igual a</option>
+          <option value="distinto">es distinta de</option>
+          <option value="contiene">contiene</option>
+          <option value="mayor">es mayor que</option>
+          <option value="menor">es menor que</option>
+          <option value="existe">tiene algún valor</option>
+        </select>
+      </label>
+      @if (n.datos.operador !== 'existe') {
+        <label class="campo">
+          <span>Valor</span>
+          <input [value]="n.datos.valor ?? ''" (input)="texto('valor', $event)" />
+        </label>
+      }
+    }
+
+    @case ('webhook') {
+      <app-tarea-n8n (usarUrl)="cambiar('url', $event)" />
+      <label class="campo">
+        <span>URL del webhook de n8n</span>
+        <input type="url" [value]="n.datos.url ?? ''" (change)="texto('url', $event)" placeholder="https://tu-n8n/webhook/agendar-cita" />
+      </label>
+      <p class="ayuda">
+        Se hace un POST con <code>contacto</code>, <code>nombre</code>, <code>variables</code> y <code>carrito</code>. Si n8n responde
+        <code>{{ '{' }} "respuesta": "…", "variables": {{ '{' }}…{{ '}' }} {{ '}' }}</code>, el bot envía la respuesta y guarda las variables. Así cada empresa
+        automatiza sus tareas repetitivas (citas, estatus, CRM…).
+      </p>
+    }
+
+    @case ('ia') {
+      <label class="campo">
+        <span>Invitación a preguntar</span>
+        <textarea rows="2" [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
+      </label>
+      <label class="campo">
+        <span>Si la IA no sabe la respuesta (opcional)</span>
+        <input [value]="n.datos.textoNoSabe ?? ''" (change)="texto('textoNoSabe', $event)" placeholder="No tengo ese dato, te comunico con alguien del equipo." />
+        <small>Después se sigue por la salida "No supo" (conéctala a Asesor, por ejemplo).</small>
+      </label>
+      <p class="ayuda">
+        El cliente escribe con sus palabras ("¿aceptan tarjeta?") y la IA contesta <b>solo</b> con lo que escribiste en
+        <b>Mi empresa → Información para la IA</b>, tu catálogo y tu horario. Si no está ahí, no inventa.
+      </p>
+    }
+
+    @case ('humano') {
+      <label class="campo">
+        <span>Mensaje al cliente</span>
+        <textarea [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
+        <small>El bot deja de contestar a este cliente hasta que en Conversaciones lo devuelvas al bot.</small>
+      </label>
+    }
+
+    @case ('fin') {
+      <label class="campo">
+        <span>Mensaje de despedida (opcional)</span>
+        <textarea [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
+      </label>
+    }
+  }
+
+  @if (n.tipo !== 'inicio' && n.tipo !== 'condicion' && n.tipo !== 'webhook') {
+    <details class="variables">
+      <summary>Variables disponibles</summary>
+      <p>
+        @for (v of variables(); track v) {
+          <code>{{ '{{' }}{{ v }}{{ '}}' }}</code>
+        }
+      </p>
+    </details>
+  }
+  <datalist id="variables-flujo">
+    @for (v of variables(); track v) {
+      <option [value]="v"></option>
+    }
+  </datalist>
+
+  <footer>
+    @if (n.tipo !== 'inicio') {
+      <button type="button" class="btn btn-chico" (click)="store.duplicarNodo(n.id)"><app-icono nombre="duplicar" [tam]="15" /> Duplicar</button>
+    }
+    <button type="button" class="btn btn-chico btn-peligro" (click)="borrar()"><app-icono nombre="basura" [tam]="15" /> Borrar bloque</button>
+  </footer>
+} @else {
+  <div class="nada">
+    <p><strong>Selecciona un bloque</strong> para editar lo que dice y hace.</p>
+    <p class="suave">Arrastra bloques desde la izquierda y une la salida (el punto a la derecha) de uno con la entrada de otro. Pasa el cursor sobre una flecha para borrarla.</p>
+  </div>
+}

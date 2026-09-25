@@ -1,0 +1,119 @@
+.tarea {
+  margin: 4px 0 14px;
+  padding: 12px;
+  border: 1px dashed color-mix(in srgb, var(--primario) 45%, var(--borde));
+  border-radius: 10px;
+  background: var(--primario-claro);
+  font-size: 13px;
+}
+
+.explica,
+.resumen {
+  margin: 0 0 10px;
+  color: #344054;
+  line-height: 1.45;
+}
+
+.resumen {
+  margin-top: 4px;
+}
+
+.ejemplos {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.ejemplos button {
+  padding: 6px 9px;
+  border: 1px dashed var(--borde);
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ejemplos button:hover {
+  border-color: var(--primario);
+}
+
+.botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.espera,
+.listo {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+  color: var(--primario-osc);
+  font-weight: 550;
+}
+
+.listo {
+  margin-bottom: 8px;
+}
+
+.acciones {
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.acciones li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 6px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.acciones .icono {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--primario);
+  color: var(--sobre-primario);
+  flex-shrink: 0;
+}
+
+.acciones small {
+  display: block;
+  color: var(--suave);
+  overflow-wrap: anywhere;
+}
+
+.nota,
+.aviso,
+.error {
+  margin: 0 0 10px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: #fff;
+  line-height: 1.4;
+}
+
+.aviso {
+  color: var(--aviso);
+}
+
+.error {
+  color: var(--peligro);
+}
+
+.pendientes {
+  margin: 4px 0 10px;
+  padding-left: 18px;
+  line-height: 1.45;
+}

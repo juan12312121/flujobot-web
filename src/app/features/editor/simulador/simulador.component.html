@@ -1,0 +1,88 @@
+<div class="barra">
+  <span class="insignia" [class.insignia-verde]="estado() === 'activa'" [class.insignia-ambar]="estado() === 'humano'">
+    <span class="punto"></span>{{ estado() === 'activa' ? 'En conversación' : estado() === 'humano' ? 'Con una persona' : estado() === 'terminada' ? 'Terminada' : 'Sin iniciar' }}
+  </span>
+  <select class="velocidad" [value]="store.velocidad()" (change)="cambiarVelocidad($event)" aria-label="Velocidad de la animación">
+    @for (v of velocidades; track v.valor) {
+      <option [value]="v.valor">{{ v.texto }}</option>
+    }
+  </select>
+  <button type="button" class="btn btn-chico btn-fantasma" title="Empezar de nuevo" (click)="reiniciar()"><app-icono nombre="regresar" [tam]="15" /></button>
+</div>
+
+<button type="button" class="demo" [class.activa]="enDemo()" (click)="demostrar()">
+  <app-icono [nombre]="enDemo() ? 'fin' : 'play'" [tam]="16" [grosor]="2.2" />
+  {{ enDemo() ? 'Detener demostración' : 'Ver una demostración automática' }}
+</button>
+
+<div class="chat" #lista>
+  @if (burbujas().length === 0) {
+    <div class="bienvenida">
+      <app-icono nombre="chat" [tam]="26" />
+      <p><b>Prueba tu bot como si fueras un cliente.</b></p>
+      <p>Escribe abajo o toca una de las respuestas sugeridas. Verás en el lienzo por dónde va la conversación y qué hace cada bloque.</p>
+    </div>
+  }
+  @for (b of burbujas(); track $index) {
+    @if (b.de === 'sistema') {
+      <p class="sistema">{{ b.texto }}</p>
+    } @else {
+      <div class="burbuja" [class.yo]="b.de === 'yo'">
+        @if (b.url) {
+          <img [src]="b.url" alt="" loading="lazy" />
+        }
+        <span [innerHTML]="formato(b.texto)"></span>
+      </div>
+    }
+  }
+  @if (escribiendo()) {
+    <div class="burbuja escribiendo" aria-label="El bot está escribiendo"><span></span><span></span><span></span></div>
+  }
+</div>
+
+@if (sugerencias().length) {
+  <div class="rapidas">
+    <span class="etiqueta-rapidas">Respuestas sugeridas</span>
+    <div class="botones">
+      @for (s of sugerencias(); track s.etiqueta) {
+        <button type="button" class="sugerencia" [disabled]="ocupado() || enDemo()" (click)="enviar(s.texto)">{{ s.etiqueta }}</button>
+      }
+    </div>
+  </div>
+}
+<div class="escribir">
+  <textarea rows="1" placeholder="O escribe lo que quieras" [value]="borrador()" (input)="escribir($event)" (keydown)="alTeclear($event)" [disabled]="enDemo()"></textarea>
+  <button type="button" class="btn btn-primario btn-icono" aria-label="Enviar" [disabled]="ocupado() || enDemo() || !borrador().trim()" (click)="enviar()">
+    <app-icono nombre="enviar" [tam]="17" />
+  </button>
+</div>
+
+@if (pasos().length) {
+  <details class="que-paso" open>
+    <summary>Qué pasó, paso a paso</summary>
+    <ol #listaPasos>
+      @for (p of pasos(); track $index; let ultimo = $last) {
+        <li [class.error]="p.error" [class.actual]="ultimo">
+          <button type="button" (click)="irAPaso(p)" [title]="'Ver el bloque ' + tipos[p.tipo].nombre">
+            <span class="icono" [style.background]="tipos[p.tipo].color"><app-icono [nombre]="tipos[p.tipo].icono" [tam]="13" [grosor]="2.3" /></span>
+            <span class="texto">{{ p.texto }}</span>
+          </button>
+        </li>
+      }
+    </ol>
+  </details>
+}
+
+@if (carrito().length || (variables() | json) !== '{}') {
+  <details class="depurar">
+    <summary>Datos que el bot recuerda</summary>
+    @if (carrito().length) {
+      <ul>
+        @for (i of carrito(); track i.productoId) {
+          <li>{{ i.cantidad }} × {{ i.nombre }} — {{ i.precio * i.cantidad | dinero }}</li>
+        }
+      </ul>
+    }
+    <pre>{{ variables() | json }}</pre>
+  </details>
+}

@@ -1,0 +1,34 @@
+<aside [class.abierto]="menuAbierto()">
+  <div class="marca">
+    <app-logo-empresa [nombre]="sesion.empresa()?.nombre ?? ''" [logoUrl]="sesion.empresa()?.marca?.logoUrl" />
+    <div>
+      <strong>{{ sesion.empresa()?.nombre }}</strong>
+      <small>con FlujoBot</small>
+    </div>
+  </div>
+
+  <nav>
+    @for (e of enlaces(); track e.ruta) {
+      <a [routerLink]="e.ruta" routerLinkActive="activo" (click)="menuAbierto.set(false)">
+        <app-icono [nombre]="e.icono" />
+        {{ e.texto }}
+      </a>
+    }
+  </nav>
+
+  <div class="usuario">
+    <span class="avatar">{{ iniciales() }}</span>
+    <div class="quien">
+      <strong>{{ sesion.usuario()?.nombre }}</strong>
+      <small>{{ sesion.usuario()?.rol === 'admin' ? 'Administrador' : 'Editor' }}</small>
+    </div>
+    <button type="button" class="btn btn-fantasma btn-chico" (click)="salir()">Salir</button>
+  </div>
+</aside>
+
+<div class="velo" [class.visible]="menuAbierto()" (click)="menuAbierto.set(false)"></div>
+
+<main>
+  <button type="button" class="btn btn-icono hamburguesa" aria-label="Menú" (click)="menuAbierto.set(true)"><app-icono nombre="menu" /></button>
+  <router-outlet />
+</main>

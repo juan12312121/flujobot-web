@@ -1,0 +1,85 @@
+.intro,
+.aviso {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  line-height: 1.45;
+}
+
+.intro {
+  background: var(--primario-claro);
+  color: var(--primario-osc);
+}
+
+.aviso {
+  background: var(--aviso-claro);
+  color: var(--aviso);
+}
+
+.interruptor {
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+
+.interruptor small {
+  display: block;
+  color: var(--suave);
+  font-size: 12px;
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.bloque {
+  margin-bottom: 16px;
+}
+
+.bloque .ayuda {
+  margin: 4px 0 8px;
+}
+
+pre {
+  margin: 0 0 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #101828;
+  color: #e4e7ec;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.enlace {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.enlace code {
+  flex: 1;
+  min-width: 200px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: #f2f4f7;
+  font-size: 12.5px;
+  word-break: break-all;
+}
+
+.enlace a {
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .fila {
+    grid-template-columns: 1fr;
+  }
+}

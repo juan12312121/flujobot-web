@@ -1,0 +1,169 @@
+:host {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  min-height: 100vh;
+}
+
+.presentacion {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+  padding: 48px clamp(24px, 6vw, 80px);
+  background: radial-gradient(circle at 20% 10%, #1b3a2d, #0f1b17 60%);
+  color: #d5e2dc;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 17px;
+  color: #fff;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--primario);
+}
+
+h1 {
+  font-size: clamp(26px, 3.2vw, 38px);
+  color: #fff;
+  max-width: 520px;
+}
+
+p {
+  margin: 0;
+  max-width: 520px;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+li {
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 7%);
+  font-size: 13px;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 320px;
+  margin-top: 10px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #e5ddd5;
+}
+
+.burbuja {
+  max-width: 85%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #111;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
+}
+
+.entrante {
+  align-self: flex-end;
+  background: #d9fdd3;
+}
+
+.saliente {
+  align-self: flex-start;
+  background: #fff;
+}
+
+.formulario {
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+}
+
+form {
+  width: 100%;
+  max-width: 420px;
+}
+
+form h2 {
+  font-size: 22px;
+}
+
+form > p {
+  margin: 6px 0 22px;
+}
+
+.ancho {
+  width: 100%;
+  height: 40px;
+  margin-top: 4px;
+}
+
+.giros {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin: 6px 0 14px;
+}
+
+.giros button {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1.5px solid var(--borde);
+  border-radius: 9px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.giros button.elegido {
+  border-color: var(--primario);
+  background: var(--primario-claro);
+}
+
+.giros .icono {
+  grid-row: span 2;
+  font-size: 20px;
+}
+
+.giros strong {
+  font-size: 12.5px;
+}
+
+.giros small {
+  font-size: 11px;
+  color: var(--suave);
+}
+
+@media (max-width: 860px) {
+  :host {
+    grid-template-columns: 1fr;
+  }
+
+  .presentacion {
+    padding: 32px 20px;
+  }
+
+  .chat {
+    display: none;
+  }
+}

@@ -1,0 +1,8 @@
+<div class="pila" aria-live="polite">
+  @for (aviso of avisos.lista(); track aviso.id) {
+    <div class="aviso" [class]="aviso.tipo" role="status">
+      <span>{{ aviso.texto }}</span>
+      <button type="button" aria-label="Cerrar" (click)="avisos.quitar(aviso.id)"><app-icono nombre="cerrar" [tam]="16" /></button>
+    </div>
+  }
+</div>

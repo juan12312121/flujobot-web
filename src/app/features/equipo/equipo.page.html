@@ -1,0 +1,45 @@
+<div class="pagina">
+  <div class="encabezado-pagina">
+    <div>
+      <h1>Equipo</h1>
+      <p>Personas de tu empresa que pueden entrar al panel.</p>
+    </div>
+  </div>
+
+  <div class="columnas">
+    <div class="tarjeta">
+      <table class="tabla">
+        <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th></th></tr></thead>
+        <tbody>
+          @for (u of usuarios(); track u.id) {
+            <tr>
+              <td>{{ u.nombre }}</td>
+              <td class="suave">{{ u.email }}</td>
+              <td><span class="insignia" [class.insignia-verde]="u.rol === 'admin'">{{ u.rol === 'admin' ? 'Administrador' : 'Editor' }}</span></td>
+              <td class="num">
+                @if (u.id !== sesion.usuario()?.id) {
+                  <button type="button" class="btn btn-chico btn-fantasma btn-peligro" (click)="borrar(u)">Quitar</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <form class="tarjeta alta" [formGroup]="form" (ngSubmit)="crear()">
+      <h2>Agregar persona</h2>
+      <label class="campo"><span>Nombre</span><input formControlName="nombre" /></label>
+      <label class="campo"><span>Correo</span><input formControlName="email" type="email" /></label>
+      <label class="campo"><span>Contraseña inicial</span><input formControlName="password" type="password" autocomplete="new-password" /><small>Mínimo 8 caracteres. Compártela por un medio seguro.</small></label>
+      <label class="campo">
+        <span>Rol</span>
+        <select formControlName="rol">
+          <option value="editor">Editor — arma bots y catálogo</option>
+          <option value="admin">Administrador — además gestiona equipo y borra bots</option>
+        </select>
+      </label>
+      <button type="submit" class="btn btn-primario" [disabled]="form.invalid || guardando()">Agregar</button>
+    </form>
+  </div>
+</div>

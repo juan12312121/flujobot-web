@@ -1,0 +1,75 @@
+<div class="pagina ancha">
+  <div class="encabezado-pagina">
+    <div>
+      <h1>Conversaciones</h1>
+      <p>Lo que los clientes platican con tus bots. Las que pasaron a un asesor aparecen en ámbar.</p>
+    </div>
+    <div class="filtros">
+      <select [value]="botId()" (change)="filtrarBot($any($event.target).value)">
+        <option value="">Todos los bots</option>
+        @for (b of bots(); track b.id) {
+          <option [value]="b.id">{{ b.nombre }}</option>
+        }
+      </select>
+      <select [value]="estado()" (change)="filtrarEstado($any($event.target).value)">
+        <option value="">Todos los estados</option>
+        <option value="humano">Esperan asesor</option>
+        <option value="activa">Con el bot</option>
+        <option value="terminada">Terminadas</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="bandeja tarjeta">
+    <ul class="lista">
+      @for (c of lista(); track c.id) {
+        <li>
+          <button type="button" [class.activa]="c.id === abierta()?.id" (click)="abrir(c.id)">
+            <span class="avatar" [class.humano]="c.estado === 'humano'">{{ (c.nombre || '#')[0].toUpperCase() }}</span>
+            <span class="resumen">
+              <span class="fila"><strong>{{ c.nombre || (c.canal === 'web' ? 'Visitante web' : '+' + c.contacto) }}</strong><small>{{ c.actualizadoEn | date: 'd MMM HH:mm' }}</small></span>
+              <small class="ultimo">
+                    @if (c.ultimoMensaje?.de === 'bot') {
+                      <app-icono nombre="bot" [tam]="13" />
+                    }
+                    {{ c.ultimoMensaje?.texto }}
+                  </small>
+            </span>
+          </button>
+        </li>
+      } @empty {
+        <li class="vacio">Sin conversaciones todavía.</li>
+      }
+    </ul>
+
+    <section class="hilo">
+      @if (abierta(); as c) {
+        <header>
+          <div>
+            <strong>{{ c.nombre || 'Sin nombre' }}</strong>
+            <small class="suave">{{ c.canal === 'web' ? 'Chat web' : 'WhatsApp +' + c.contacto }} · {{ etiquetas[c.estado] }}</small>
+          </div>
+          @if (c.estado === 'humano') {
+            <button type="button" class="btn btn-primario btn-chico" (click)="devolver(c)">Devolver al bot</button>
+          }
+        </header>
+        <div class="mensajes">
+          @for (m of c.historial ?? []; track $index) {
+            <div class="burbuja" [class.bot]="m.de === 'bot'">
+              @if (m.url) {
+                <img [src]="m.url" alt="" loading="lazy" />
+              }
+              <span>{{ m.texto }}</span>
+              <small>{{ m.fecha | date: 'HH:mm' }}</small>
+            </div>
+          }
+        </div>
+        @if (c.estado === 'humano') {
+          <p class="nota">Contesta desde el WhatsApp del negocio. Cuando termines, devuélvela al bot.</p>
+        }
+      } @else {
+        <p class="vacio">Elige una conversación.</p>
+      }
+    </section>
+  </div>
+</div>

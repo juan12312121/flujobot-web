@@ -1,0 +1,10 @@
+:host {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  background: #efeae2;
+}
+
+.cargando {
+  color: var(--suave);
+}

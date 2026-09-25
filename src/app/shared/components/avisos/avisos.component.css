@@ -1,0 +1,51 @@
+.pila {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+  max-width: min(380px, calc(100vw - 32px));
+}
+
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: #101828;
+  color: #fff;
+  box-shadow: var(--sombra-alta);
+  animation: entrar .18s ease-out;
+}
+
+.aviso.exito {
+  background: var(--primario-osc);
+}
+
+.aviso.error {
+  background: var(--peligro);
+}
+
+span {
+  flex: 1;
+}
+
+button {
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: .8;
+}
+
+@keyframes entrar {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+}
