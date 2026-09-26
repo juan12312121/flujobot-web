@@ -67,7 +67,7 @@
   padding: 16px;
   border-radius: 12px;
   background: rgb(255 255 255 / 85%);
-  color: #344054;
+  color: var(--texto-2);
   text-align: center;
   font-size: 13px;
 }
@@ -93,7 +93,7 @@
   max-width: 88%;
   padding: 7px 10px;
   border-radius: 8px;
-  background: #fff;
+  background: var(--superficie);
   box-shadow: 0 1px 1px rgb(0 0 0 / 8%);
   font-size: 13px;
   line-height: 1.4;
@@ -151,7 +151,7 @@
 
 .rapidas {
   padding: 8px 12px 0;
-  background: #f0f2f5;
+  background: var(--superficie-3);
 }
 
 .etiqueta-rapidas {
@@ -175,7 +175,7 @@
   padding: 6px 11px;
   border: 1px solid color-mix(in srgb, var(--primario) 40%, var(--borde));
   border-radius: 999px;
-  background: #fff;
+  background: var(--superficie);
   color: var(--primario-osc);
   font: inherit;
   font-size: 12.5px;
@@ -199,7 +199,7 @@
   display: flex;
   gap: 8px;
   padding: 8px 12px 12px;
-  background: #f0f2f5;
+  background: var(--superficie-3);
 }
 
 .escribir textarea {
@@ -228,7 +228,7 @@
 .depurar summary {
   cursor: pointer;
   font-weight: 600;
-  color: #344054;
+  color: var(--texto-2);
 }
 
 .que-paso ol {

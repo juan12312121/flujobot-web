@@ -10,7 +10,7 @@
   --primario: #12a150;
   --sobre-primario: #ffffff;
   --primario-osc: color-mix(in srgb, var(--primario) 78%, #000);
-  --primario-claro: color-mix(in srgb, var(--primario) 11%, #fff);
+  --primario-claro: color-mix(in srgb, var(--primario) 11%, var(--superficie));
   --menu: #0f1b17;
   --menu-texto: rgb(255 255 255 / 78%);
   --menu-fuerte: #ffffff;
@@ -25,7 +25,52 @@
   --radio: 10px;
   --sombra: 0 1px 2px rgb(16 24 40 / 6%), 0 1px 3px rgb(16 24 40 / 8%);
   --sombra-alta: 0 12px 32px rgb(16 24 40 / 18%);
+  --superficie-3: #f2f4f7;
+  --texto-2: #344054;
+  --borde-fuerte: #d0d5dd;
   color-scheme: light;
+}
+
+/* Modo oscuro: TemaService pone data-modo="oscuro" en <html> y todos los tokens cambian */
+:root[data-modo='oscuro'] {
+  --fondo: #0f1419;
+  --superficie: #171d24;
+  --superficie-2: #1c232c;
+  --superficie-3: #242c36;
+  --borde: #2c3540;
+  --borde-fuerte: #3a4552;
+  --texto: #e6e9ee;
+  --texto-2: #c3c9d2;
+  --suave: #8b95a3;
+  --primario-osc: color-mix(in srgb, var(--primario) 70%, #fff);
+  --peligro: #f97066;
+  --peligro-claro: #3a1a18;
+  --aviso: #fdb022;
+  --aviso-claro: #3a2a12;
+  --info: #60a5fa;
+  --sombra: 0 1px 2px rgb(0 0 0 / 30%), 0 1px 3px rgb(0 0 0 / 35%);
+  --sombra-alta: 0 12px 32px rgb(0 0 0 / 55%);
+  color-scheme: dark;
+}
+
+/* Fondo del espacio de trabajo (imagen, degradado o patrón) con desenfoque y velo encima */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::before {
+  inset: calc(var(--fondo-desenfoque, 0px) * -2);
+  background: var(--fondo-imagen, none);
+  filter: blur(var(--fondo-desenfoque, 0px));
+}
+
+body::after {
+  inset: 0;
+  background: var(--fondo-velo, transparent);
 }
 
 *,
@@ -145,7 +190,7 @@ a {
 .etiqueta {
   font-size: 12.5px;
   font-weight: 600;
-  color: #344054;
+  color: var(--texto-2);
 }
 
 .campo small,
@@ -160,9 +205,9 @@ textarea {
   width: 100%;
   min-height: 36px;
   padding: 8px 10px;
-  border: 1px solid #d0d5dd;
+  border: 1px solid var(--borde-fuerte);
   border-radius: 8px;
-  background: #fff;
+  background: var(--superficie);
   color: var(--texto);
   font: inherit;
 }
@@ -276,8 +321,8 @@ input[type='checkbox'] {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  background: #eef0f3;
-  color: #344054;
+  background: var(--superficie-3);
+  color: var(--texto-2);
   white-space: nowrap;
 }
 

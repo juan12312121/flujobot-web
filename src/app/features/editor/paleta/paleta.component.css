@@ -2,7 +2,7 @@
   display: block;
   padding: 14px 12px;
   overflow-y: auto;
-  background: #fff;
+  background: var(--superficie);
   border-right: 1px solid var(--borde);
 }
 
@@ -27,7 +27,7 @@ h3:first-child {
   margin-bottom: 6px;
   border: 1px solid var(--borde);
   border-radius: 9px;
-  background: #fff;
+  background: var(--superficie);
   text-align: left;
   font: inherit;
   cursor: grab;

@@ -30,7 +30,7 @@
   padding: 12px 14px;
   border: 0;
   border-bottom: 1px solid var(--borde);
-  background: #fff;
+  background: var(--superficie);
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -50,7 +50,7 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: #e4e7ec;
+  background: var(--superficie-3);
   font-weight: 700;
   flex-shrink: 0;
   position: relative;
@@ -65,7 +65,7 @@
   place-items: center;
   width: 17px;
   height: 17px;
-  border: 2px solid #fff;
+  border: 2px solid var(--superficie);
   border-radius: 50%;
   background: var(--primario);
   color: #fff;
@@ -136,7 +136,7 @@
   max-width: 70%;
   padding: 7px 10px;
   border-radius: 8px;
-  background: #fff;
+  background: var(--superficie);
   white-space: pre-wrap;
   font-size: 13px;
 }

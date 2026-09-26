@@ -2,13 +2,12 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnIni
 import { EmpresaService } from '../../core/services/empresa/empresa.service';
 import { TemaService } from '../../core/services/tema/tema.service';
 import { AvisosService } from '../../core/services/avisos/avisos.service';
-import { GIROS, PALETAS } from '../../core/empresa/giros';
+import { GIROS } from '../../core/empresa/giros';
 import { ConfigAvisos, Empresa, Giro, Horario, Marca, Modulos, OpcionGiro, Terminos } from '../../core/models';
 import { AVISOS_BASE, TEXTOS_AVISO } from '../../core/empresa/avisos';
 import { CobrosComponent } from './cobros/cobros.component';
-import { LogoEmpresaComponent } from '../../shared/components/logo-empresa/logo-empresa.component';
+import { AparienciaComponent } from './apariencia/apariencia.component';
 import { IconoComponent } from '../../shared/components/icono/icono.component';
-import { SubirImagenComponent } from '../../shared/components/subir-imagen/subir-imagen.component';
 
 type Seccion = 'identidad' | 'apariencia' | 'modulos' | 'horario' | 'conocimiento' | 'avisos' | 'cobros';
 
@@ -56,7 +55,7 @@ const TERMINOS: { clave: keyof Terminos; etiqueta: string }[] = [
  */
 @Component({
   selector: 'app-empresa',
-  imports: [IconoComponent, LogoEmpresaComponent, SubirImagenComponent, CobrosComponent],
+  imports: [IconoComponent, CobrosComponent, AparienciaComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './empresa.page.html',
   styleUrl: './empresa.page.css',
@@ -67,7 +66,6 @@ export class EmpresaPage implements OnInit {
   private readonly avisos = inject(AvisosService);
 
   protected readonly giros = GIROS;
-  protected readonly paletas = PALETAS;
   protected readonly dias = DIAS;
   protected readonly zonas = ZONAS;
   protected readonly listaTerminos = TERMINOS;
@@ -126,12 +124,8 @@ export class EmpresaPage implements OnInit {
 
   protected marca(cambios: Partial<Marca>): void {
     this.borrador.update((b) => (b ? { ...b, marca: { ...b.marca, ...cambios } } : b));
-    const m = this.borrador()!.marca;
-    this.tema.vistaPrevia.set({ colorPrimario: m.colorPrimario, colorMenu: m.colorMenu });
-  }
-
-  protected color(campo: 'colorPrimario' | 'colorMenu', evento: Event): void {
-    this.marca({ [campo]: (evento.target as HTMLInputElement).value });
+    const { colorPrimario, colorMenu, modo, fondo } = this.borrador()!.marca;
+    this.tema.vistaPrevia.set({ colorPrimario, colorMenu, modo, fondo });
   }
 
   protected modulo(clave: keyof Modulos, evento: Event): void {

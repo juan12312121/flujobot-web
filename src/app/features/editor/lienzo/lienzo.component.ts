@@ -121,8 +121,9 @@ export class LienzoComponent {
       width: '100%',
       height: '100%',
       gridSize: 10,
-      drawGrid: { name: 'dot', args: { color: '#cfd4dc', thickness: 1.2 } },
-      background: { color: '#f7f8fa' },
+      // El fondo lo pone el CSS del componente (sigue el modo claro/oscuro del tema)
+      drawGrid: { name: 'dot', args: { color: document.documentElement.dataset['modo'] === 'oscuro' ? '#3a4552' : '#cfd4dc', thickness: 1.2 } },
+      background: { color: 'transparent' },
       defaultLink: () => crearFlecha(),
       defaultConnector: { name: 'curve' },
       linkPinning: false,

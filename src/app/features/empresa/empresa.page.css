@@ -30,7 +30,7 @@
 }
 
 .secciones button:hover {
-  background: #eceef2;
+  background: var(--superficie-3);
 }
 
 .secciones button.activa {
@@ -64,7 +64,7 @@
   padding: 8px 10px;
   border: 1.5px solid var(--borde);
   border-radius: 9px;
-  background: #fff;
+  background: var(--superficie);
   font: inherit;
   font-size: 13px;
   text-align: left;
@@ -145,7 +145,7 @@
   gap: 8px;
   padding: 10px 12px;
   border-radius: 9px;
-  background: #fff;
+  background: var(--superficie);
 }
 
 .separado {
@@ -166,7 +166,7 @@
   height: 36px;
   border: 1.5px solid var(--borde);
   border-radius: 8px;
-  background: #fff;
+  background: var(--superficie);
   font: inherit;
   font-weight: 600;
   color: var(--suave);
@@ -182,7 +182,7 @@
 code {
   padding: 1px 5px;
   border-radius: 4px;
-  background: #f2f4f7;
+  background: var(--superficie-3);
   font-size: 12px;
 }
 

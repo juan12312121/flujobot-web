@@ -38,10 +38,36 @@ export interface Terminos {
   clientes: string;
 }
 
+export type ModoTema = 'claro' | 'oscuro';
+
+/** Fondo del espacio de trabajo: uno de la galería (id), una imagen subida (URL) o nada. */
+export interface FondoMarca {
+  tipo: 'ninguno' | 'galeria' | 'imagen';
+  valor: string;
+  /** 0-95: qué tanto se tapa la imagen con el color de fondo para que se lea el contenido. */
+  velo: number;
+  desenfoque: number;
+}
+
+/** Tema que armó la empresa y guardó para reusarlo. */
+export interface TemaGuardado {
+  id: string;
+  nombre: string;
+  colorPrimario: string;
+  colorMenu: string;
+  modo: ModoTema;
+  fondo: FondoMarca;
+}
+
 export interface Marca {
   colorPrimario: string;
   colorMenu: string;
   logoUrl: string;
+  tema?: string;
+  modo?: ModoTema;
+  fondo?: FondoMarca;
+  temasGuardados?: TemaGuardado[];
+  fondosSubidos?: string[];
 }
 
 export interface Modulos {

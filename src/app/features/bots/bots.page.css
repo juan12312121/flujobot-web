@@ -71,7 +71,7 @@
   padding: 12px;
   border: 1.5px solid var(--borde);
   border-radius: 10px;
-  background: #fff;
+  background: var(--superficie);
   font: inherit;
   text-align: left;
   cursor: pointer;

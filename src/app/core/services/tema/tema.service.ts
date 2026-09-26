@@ -1,8 +1,9 @@
 import { DOCUMENT, effect, inject, Injectable, signal } from '@angular/core';
 import { SesionService } from '../sesion/sesion.service';
 import { Marca } from '../../models';
+import { fondoCss } from '../../tema/temas';
 
-const PREDETERMINADO: Marca = { colorPrimario: '#12a150', colorMenu: '#0f1b17', logoUrl: '' };
+const PREDETERMINADO: Marca = { colorPrimario: '#12a150', colorMenu: '#0f1b17', logoUrl: '', modo: 'claro' };
 
 /** Luminancia relativa (WCAG) de un color #RRGGBB. */
 function luminancia(hex: string): number {
@@ -17,9 +18,10 @@ function luminancia(hex: string): number {
 export const textoSobre = (fondo: string) => (luminancia(fondo) > 0.45 ? '#101828' : '#ffffff');
 
 /**
- * Aplica los colores de la empresa como variables CSS en <html>. Todo el panel se pinta
- * con var(--primario) y var(--menu), así que cambiar la marca recolorea todo al instante.
- * `vistaPrevia` permite probar colores en "Mi empresa" antes de guardarlos.
+ * Aplica el tema de la empresa en <html>: colores (variables CSS), modo claro/oscuro
+ * (atributo data-modo, que cambia todos los tokens en styles.css) e imagen de fondo.
+ * Todo el panel se pinta con esas variables, así que cambiar el tema recolorea todo al instante.
+ * `vistaPrevia` permite probar temas en "Mi empresa" antes de guardarlos.
  */
 @Injectable({ providedIn: 'root' })
 export class TemaService {
@@ -31,8 +33,10 @@ export class TemaService {
     effect(() => this.aplicar({ ...PREDETERMINADO, ...(this.sesion.empresa()?.marca ?? {}), ...(this.vistaPrevia() ?? {}) }));
   }
 
-  private aplicar({ colorPrimario, colorMenu }: Marca): void {
+  private aplicar({ colorPrimario, colorMenu, modo = 'claro', fondo }: Marca): void {
     const oscuro = textoSobre(colorMenu) === '#ffffff';
+    this.raiz.dataset['modo'] = modo;
+    const imagen = fondoCss(fondo, modo);
     const variables: Record<string, string> = {
       '--primario': colorPrimario,
       '--sobre-primario': textoSobre(colorPrimario),
@@ -42,6 +46,10 @@ export class TemaService {
       '--menu-suave': oscuro ? 'rgb(255 255 255 / 50%)' : 'rgb(16 24 40 / 50%)',
       '--menu-hover': oscuro ? 'rgb(255 255 255 / 7%)' : 'rgb(16 24 40 / 6%)',
       '--menu-borde': oscuro ? 'rgb(255 255 255 / 9%)' : 'rgb(16 24 40 / 10%)',
+      '--fondo-imagen': imagen ?? 'none',
+      // El velo es el color de fondo del tema encima de la imagen: 0 = imagen pura, 95 = casi lisa
+      '--fondo-velo': imagen ? `color-mix(in srgb, var(--fondo) ${fondo?.velo ?? 70}%, transparent)` : 'transparent',
+      '--fondo-desenfoque': `${imagen ? (fondo?.desenfoque ?? 0) : 0}px`,
     };
     for (const [k, v] of Object.entries(variables)) this.raiz.style.setProperty(k, v);
   }

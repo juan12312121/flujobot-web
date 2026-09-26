@@ -34,7 +34,7 @@ img {
 }
 
 code {
-  background: #f2f4f7;
+  background: var(--superficie-3);
   padding: 1px 5px;
   border-radius: 4px;
 }

@@ -19,7 +19,7 @@
   max-height: calc(100vh - 32px);
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: var(--superficie);
   border-radius: 14px;
   box-shadow: var(--sombra-alta);
 }

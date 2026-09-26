@@ -1,0 +1,154 @@
+<!-- Temas -->
+<section class="bloque">
+  <header>
+    <span class="etiqueta">Temas</span>
+    <button type="button" class="btn btn-chico" (click)="guardarComoTema()"><app-icono nombre="mas" [tam]="14" /> Guardar el actual como tema</button>
+  </header>
+  <div class="temas">
+    @for (t of temas; track t.id) {
+      <button type="button" class="tema" [class.elegido]="marca().tema === t.id" (click)="aplicarTema(t)" [title]="t.nombre">
+        <span class="mini" [attr.data-modo]="t.modo">
+          <span class="mini-menu" [style.background]="t.colorMenu"></span>
+          <span class="mini-cuerpo" [style.background]="miniaturaTema(t)">
+            <i [style.background]="t.colorPrimario"></i>
+          </span>
+        </span>
+        <span class="nombre">{{ t.nombre }}@if (t.modo === 'oscuro') { <small>oscuro</small> }</span>
+      </button>
+    }
+    @for (t of guardados(); track t.id) {
+      <button type="button" class="tema propio" [class.elegido]="marca().tema === t.id" (click)="aplicarTema(t)" [title]="t.nombre">
+        <span class="mini" [attr.data-modo]="t.modo">
+          <span class="mini-menu" [style.background]="t.colorMenu"></span>
+          <span class="mini-cuerpo" [style.background]="miniaturaTema(t)">
+            <i [style.background]="t.colorPrimario"></i>
+          </span>
+        </span>
+        <span class="nombre">{{ t.nombre }} <small>tuyo</small></span>
+        <span class="quitar" role="button" tabindex="0" aria-label="Borrar tema" (click)="borrarTema(t, $event)" (keydown.enter)="borrarTema(t, $event)"
+          ><app-icono nombre="cerrar" [tam]="12"
+        /></span>
+      </button>
+    }
+  </div>
+</section>
+
+<!-- Personalizar -->
+<section class="bloque">
+  <span class="etiqueta">Personalizar</span>
+  <div class="fila tres">
+    <div class="campo">
+      <span>Modo</span>
+      <div class="segmentos" role="radiogroup">
+        <button type="button" [class.activo]="modo() === 'claro'" (click)="cambiarModo('claro')"><app-icono nombre="destellos" [tam]="14" /> Claro</button>
+        <button type="button" [class.activo]="modo() === 'oscuro'" (click)="cambiarModo('oscuro')"><app-icono nombre="fin" [tam]="14" /> Oscuro</button>
+      </div>
+    </div>
+    <label class="campo">
+      <span>Color principal</span>
+      <span class="color">
+        <input type="color" [value]="marca().colorPrimario" (input)="color('colorPrimario', $event)" />
+        <code>{{ marca().colorPrimario }}</code>
+      </span>
+    </label>
+    <label class="campo">
+      <span>Color del menú lateral</span>
+      <span class="color">
+        <input type="color" [value]="marca().colorMenu" (input)="color('colorMenu', $event)" />
+        <code>{{ marca().colorMenu }}</code>
+      </span>
+    </label>
+  </div>
+  <p class="ayuda">Botones y resaltados usan el color principal. El texto del menú se ajusta solo para que se lea.</p>
+</section>
+
+<!-- Fondo -->
+<section class="bloque">
+  <header>
+    <span class="etiqueta">Fondo</span>
+    @if (fondo().tipo !== 'ninguno') {
+      <button type="button" class="btn btn-chico btn-fantasma" (click)="quitarFondo()">Sin fondo</button>
+    }
+  </header>
+  <nav class="pestanas" role="tablist">
+    @for (c of categorias; track c.id) {
+      <button type="button" role="tab" [class.activa]="pestanaFondo() === c.id" (click)="pestanaFondo.set(c.id)">{{ c.nombre }}</button>
+    }
+    <button type="button" role="tab" [class.activa]="pestanaFondo() === 'mias'" (click)="pestanaFondo.set('mias')">Mis imágenes ({{ subidos().length }})</button>
+  </nav>
+
+  @if (pestanaFondo() === 'mias') {
+    <div class="subir">
+      <app-subir-imagen uso="fondos" url="" (cambio)="subida($event)" />
+    </div>
+    <div class="galeria">
+      @for (url of subidos(); track url) {
+        <button type="button" class="fondo" [class.elegido]="elegido('imagen', url)" (click)="elegirImagen(url)">
+          <span class="vista" [style.background]="'url(&quot;' + url + '&quot;) center / cover no-repeat'"></span>
+          <span class="quitar" role="button" tabindex="0" aria-label="Quitar imagen" (click)="borrarSubida(url, $event)" (keydown.enter)="borrarSubida(url, $event)"
+            ><app-icono nombre="cerrar" [tam]="12"
+          /></span>
+        </button>
+      } @empty {
+        <p class="suave vacio">Sube fotos de tu negocio, tu local o tus productos para usarlas de fondo.</p>
+      }
+    </div>
+  } @else {
+    <div class="galeria">
+      @for (f of fondosVisibles(); track f.id) {
+        <button type="button" class="fondo" [class.elegido]="elegido('galeria', f.id)" (click)="elegirGaleria(f.id, f.veloSugerido)" [title]="f.nombre">
+          <span class="vista" [attr.data-modo]="modo()" [style.background]="cssMiniatura(f.miniatura)"></span>
+          <span class="nombre-fondo">{{ f.nombre }}</span>
+        </button>
+      }
+    </div>
+    @if (pestanaFondo() === 'fotos') {
+      <p class="ayuda">Fotos de <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a> (uso libre).</p>
+    }
+  }
+
+  @if (fondo().tipo !== 'ninguno') {
+    <div class="fila">
+      <label class="campo">
+        <span>Velo ({{ fondo().velo }}%)</span>
+        <input type="range" min="0" max="95" step="5" [value]="fondo().velo" (input)="ajuste('velo', $event)" />
+        <small>Más velo = el fondo se ve más suave y el contenido se lee mejor.</small>
+      </label>
+      <label class="campo">
+        <span>Desenfoque ({{ fondo().desenfoque }} px)</span>
+        <input type="range" min="0" max="20" step="1" [value]="fondo().desenfoque" (input)="ajuste('desenfoque', $event)" />
+        <small>Difumina la imagen para que no distraiga.</small>
+      </label>
+    </div>
+  }
+</section>
+
+<!-- Logo -->
+<section class="bloque">
+  <span class="etiqueta">Logo</span>
+  <app-subir-imagen uso="logo" [url]="marca().logoUrl" (cambio)="cambio.emit({ logoUrl: $event })" />
+  <small class="suave">Cuadrado de preferencia. Sin logo se usan tus iniciales.</small>
+</section>
+
+<!-- Vista previa -->
+<section class="bloque">
+  <span class="etiqueta">Vista previa</span>
+  <div class="previa" [attr.data-modo]="modo()">
+    <div class="previa-menu" [style.background]="marca().colorMenu" [style.color]="textoMenu()">
+      <app-logo-empresa [nombre]="nombre()" [logoUrl]="marca().logoUrl" [color]="marca().colorPrimario" />
+      <strong>{{ nombre() }}</strong>
+    </div>
+    <div class="previa-cuerpo">
+      @if (fondoActualCss(); as css) {
+        <span class="previa-fondo" [style.background]="css" [style.filter]="'blur(' + fondo().desenfoque / 3 + 'px)'"></span>
+        <span class="previa-velo" [style.opacity]="fondo().velo / 100"></span>
+      }
+      <div class="previa-tarjeta">
+        <strong>{{ terminos()?.pedidos ?? 'Pedidos' }} de hoy</strong>
+        <span class="suave">3 por atender</span>
+        <button type="button" class="btn btn-primario btn-chico" [style.background]="marca().colorPrimario" [style.border-color]="marca().colorPrimario">Ver todos</button>
+      </div>
+    </div>
+  </div>
+  <p class="ayuda">El tema ya se ve en todo el panel; se queda al guardar.</p>
+</section>

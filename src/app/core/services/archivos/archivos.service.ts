@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../api/api.service';
 
-export type UsoImagen = 'productos' | 'logo' | 'mensajes';
+export type UsoImagen = 'productos' | 'logo' | 'mensajes' | 'fondos';
 
 interface FirmaSubida {
   url: string;

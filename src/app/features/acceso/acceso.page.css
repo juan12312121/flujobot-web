@@ -86,7 +86,7 @@ li {
 
 .saliente {
   align-self: flex-start;
-  background: #fff;
+  background: var(--superficie);
 }
 
 .formulario {
@@ -129,7 +129,7 @@ form > p {
   padding: 8px 10px;
   border: 1.5px solid var(--borde);
   border-radius: 9px;
-  background: #fff;
+  background: var(--superficie);
   font: inherit;
   text-align: left;
   cursor: pointer;

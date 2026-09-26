@@ -2,7 +2,7 @@
   position: relative;
   display: block;
   overflow: hidden;
-  background: #f7f8fa;
+  background: var(--superficie-2);
 }
 
 .papel {
@@ -58,7 +58,7 @@
   border: 1px solid var(--borde);
   border-left: 4px solid var(--primario);
   border-radius: 12px;
-  background: #fff;
+  background: var(--superficie);
   box-shadow: var(--sombra-alta);
   animation: narrador-entra 0.25s ease-out;
 }
@@ -127,7 +127,7 @@
   border: 1px solid var(--borde);
   border-left: 4px solid #101828;
   border-radius: 12px;
-  background: #fff;
+  background: var(--superficie);
   box-shadow: var(--sombra);
 }
 

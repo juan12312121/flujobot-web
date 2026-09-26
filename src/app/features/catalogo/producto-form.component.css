@@ -18,7 +18,7 @@
   padding: 9px 11px;
   border: 1.5px solid var(--borde);
   border-radius: 9px;
-  background: #fff;
+  background: var(--superficie);
   font: inherit;
   font-weight: 600;
   cursor: pointer;

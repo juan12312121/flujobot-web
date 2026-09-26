@@ -23,7 +23,7 @@
   height: 38px;
   border-radius: 8px;
   object-fit: cover;
-  background: #f2f4f7;
+  background: var(--superficie-3);
   font-weight: 700;
   color: var(--suave);
 }

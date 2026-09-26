@@ -13,7 +13,7 @@ img, span {
 
 img {
   object-fit: contain;
-  background: #fff;
+  background: var(--superficie);
 }
 
 span {

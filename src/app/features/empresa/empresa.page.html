@@ -18,7 +18,7 @@
     <div class="distribucion">
       <nav class="secciones" role="tablist">
         <button type="button" role="tab" [class.activa]="seccion() === 'identidad'" (click)="seccion.set('identidad')">Identidad</button>
-        <button type="button" role="tab" [class.activa]="seccion() === 'apariencia'" (click)="seccion.set('apariencia')">Colores y logo</button>
+        <button type="button" role="tab" [class.activa]="seccion() === 'apariencia'" (click)="seccion.set('apariencia')">Temas y fondo</button>
         <button type="button" role="tab" [class.activa]="seccion() === 'modulos'" (click)="seccion.set('modulos')">Secciones y palabras</button>
         <button type="button" role="tab" [class.activa]="seccion() === 'horario'" (click)="seccion.set('horario')">Horario de atención</button>
         <button type="button" role="tab" [class.activa]="seccion() === 'conocimiento'" (click)="seccion.set('conocimiento')">Información para la IA</button>
@@ -63,56 +63,7 @@
           }
 
           @case ('apariencia') {
-            <span class="etiqueta">Paletas sugeridas</span>
-            <div class="paletas">
-              @for (p of paletas; track p.nombre) {
-                <button
-                  type="button"
-                  [class.elegida]="b.marca.colorPrimario === p.primario && b.marca.colorMenu === p.menu"
-                  (click)="marca({ colorPrimario: p.primario, colorMenu: p.menu })"
-                  [title]="p.nombre"
-                >
-                  <span class="muestra" [style.background]="p.menu"><i [style.background]="p.primario"></i></span>
-                  {{ p.nombre }}
-                </button>
-              }
-            </div>
-            <div class="fila">
-              <label class="campo">
-                <span>Color principal</span>
-                <span class="color">
-                  <input type="color" [value]="b.marca.colorPrimario" (input)="color('colorPrimario', $event)" />
-                  <code>{{ b.marca.colorPrimario }}</code>
-                </span>
-                <small>Botones, enlaces y resaltados.</small>
-              </label>
-              <label class="campo">
-                <span>Color del menú lateral</span>
-                <span class="color">
-                  <input type="color" [value]="b.marca.colorMenu" (input)="color('colorMenu', $event)" />
-                  <code>{{ b.marca.colorMenu }}</code>
-                </span>
-                <small>El texto se ajusta solo para que se lea.</small>
-              </label>
-            </div>
-            <div class="campo">
-              <span>Logo</span>
-              <app-subir-imagen uso="logo" [url]="b.marca.logoUrl" (cambio)="marca({ logoUrl: $event })" />
-              <small>Cuadrado de preferencia. Sin logo se usan tus iniciales.</small>
-            </div>
-
-            <span class="etiqueta">Vista previa</span>
-            <div class="previa" [style.background]="b.marca.colorMenu">
-              <div class="previa-menu">
-                <app-logo-empresa [nombre]="b.nombre" [logoUrl]="b.marca.logoUrl" [color]="b.marca.colorPrimario" />
-                <strong>{{ b.nombre }}</strong>
-              </div>
-              <div class="previa-cuerpo">
-                <button type="button" class="btn btn-primario btn-chico">{{ b.terminos.citas }} de hoy</button>
-                <span class="insignia insignia-verde">Publicado</span>
-              </div>
-            </div>
-            <p class="ayuda">Los colores ya se ven en todo el panel; se quedan al guardar.</p>
+            <app-apariencia [marca]="b.marca" [nombre]="b.nombre" [terminos]="b.terminos" (cambio)="marca($event)" />
           }
 
           @case ('modulos') {
