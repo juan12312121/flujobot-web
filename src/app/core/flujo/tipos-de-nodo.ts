@@ -192,6 +192,28 @@ export const TIPOS: Record<TipoNodo, DefinicionTipo> = {
     espera: true,
     datosIniciales: () => ({ texto: '¿Te gustaría recibir nuestras promociones y novedades por aquí?' }),
   },
+  registro: {
+    tipo: 'registro',
+    nombre: 'Guardar en módulo',
+    descripcion: 'Guarda lo que dio el cliente en uno de tus módulos',
+    icono: 'formulario',
+    color: '#15803d',
+    grupo: 'Negocio',
+    salidas: ['siguiente'],
+    espera: false,
+    datosIniciales: () => ({ moduloId: '', campos: {}, texto: '¡Listo! Quedó registrado con el folio *{{folio}}*.' }),
+  },
+  consulta: {
+    tipo: 'consulta',
+    nombre: 'Consultar módulo',
+    descripcion: 'Le muestra al cliente sus registros ("¿cómo va mi reparación?")',
+    icono: 'lupa',
+    color: '#0369a1',
+    grupo: 'Negocio',
+    salidas: ['encontrado', 'nada'],
+    espera: false,
+    datosIniciales: () => ({ moduloId: '', texto: 'Esto es lo que encontré:' }),
+  },
   humano: {
     tipo: 'humano',
     nombre: 'Asesor',
@@ -279,6 +301,10 @@ export function resumenNodo(nodo: NodoFlujo): string {
       return d.que === 'pedidos' ? 'Sus últimos pedidos' : d.que === 'citas' ? 'Sus próximas citas' : 'Sus pedidos y citas';
     case 'esperar':
       return `Espera ${duracion(d.minutos ?? 60)} a que conteste`;
+    case 'registro':
+      return d.moduloId ? `Guarda ${Object.keys(d.campos ?? {}).length} dato(s) en el módulo` : 'Elige el módulo';
+    case 'consulta':
+      return d.moduloId ? 'Busca los registros de quien escribe' : 'Elige el módulo';
     case 'encuesta':
       return `Calificación 1 a 5${d.pedirComentario ? ' + comentario' : ''}`;
     case 'condicion':

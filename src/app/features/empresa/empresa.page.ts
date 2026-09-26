@@ -7,6 +7,7 @@ import { ConfigAvisos, Empresa, Giro, Horario, Marca, Modulos, OpcionGiro, Termi
 import { AVISOS_BASE, TEXTOS_AVISO } from '../../core/empresa/avisos';
 import { CobrosComponent } from './cobros/cobros.component';
 import { AparienciaComponent } from './apariencia/apariencia.component';
+import { ModulosPropiosComponent } from './modulos-propios/modulos-propios.component';
 import { IconoComponent } from '../../shared/components/icono/icono.component';
 
 type Seccion = 'identidad' | 'apariencia' | 'modulos' | 'horario' | 'conocimiento' | 'avisos' | 'cobros';
@@ -55,7 +56,7 @@ const TERMINOS: { clave: keyof Terminos; etiqueta: string }[] = [
  */
 @Component({
   selector: 'app-empresa',
-  imports: [IconoComponent, CobrosComponent, AparienciaComponent],
+  imports: [IconoComponent, CobrosComponent, AparienciaComponent, ModulosPropiosComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './empresa.page.html',
   styleUrl: './empresa.page.css',

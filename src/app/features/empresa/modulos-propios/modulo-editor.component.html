@@ -1,0 +1,67 @@
+<app-modal [titulo]="modulo() ? 'Editar ' + modulo()!.nombre : 'Nuevo módulo'" [ancho]="760" (cerrar)="cerrar.emit()">
+  <div class="fila">
+    <label class="campo">
+      <span>Nombre (plural)</span>
+      <input [value]="datos().nombre" maxlength="60" placeholder="Órdenes de servicio" (input)="dato('nombre', $any($event.target).value)" />
+    </label>
+    <label class="campo">
+      <span>Un registro se llama</span>
+      <input [value]="datos().singular" maxlength="60" placeholder="Orden de servicio" (input)="dato('singular', $any($event.target).value)" />
+    </label>
+    <label class="campo corto">
+      <span>Folios</span>
+      <input [value]="datos().prefijo" maxlength="4" placeholder="OS" (input)="dato('prefijo', $any($event.target).value)" />
+      <small>{{ (datos().prefijo || 'XX').toUpperCase() }}-000001</small>
+    </label>
+  </div>
+  <label class="campo">
+    <span>Descripción (opcional)</span>
+    <input [value]="datos().descripcion" maxlength="200" placeholder="Para qué sirve este módulo" (input)="dato('descripcion', $any($event.target).value)" />
+  </label>
+
+  <span class="etiqueta">Ícono</span>
+  <div class="iconos">
+    @for (i of iconos; track i) {
+      <button type="button" [class.elegido]="datos().icono === i" (click)="dato('icono', i)" [attr.aria-label]="i"><app-icono [nombre]="i" [tam]="18" /></button>
+    }
+  </div>
+
+  <span class="etiqueta">Campos</span>
+  <div class="campos">
+    <div class="cabecera">
+      <span>Nombre</span><span>Tipo</span><span title="Obligatorio">Oblig.</span><span title="Se ve como columna en la tabla">En tabla</span><span></span>
+    </div>
+    @for (c of campos(); track c.id; let i = $index; let ultimo = $last) {
+      <div class="campo-fila">
+        <input [value]="c.nombre" maxlength="60" (input)="cambiarCampo(i, { nombre: $any($event.target).value })" aria-label="Nombre del campo" />
+        <select [value]="c.tipo" (change)="cambiarCampo(i, { tipo: $any($event.target).value })" aria-label="Tipo">
+          @for (t of tipos; track t.tipo) {
+            <option [value]="t.tipo">{{ t.nombre }}</option>
+          }
+        </select>
+        <input type="checkbox" [checked]="c.requerido" (change)="cambiarCampo(i, { requerido: $any($event.target).checked })" aria-label="Obligatorio" />
+        <input type="checkbox" [checked]="c.enLista" (change)="cambiarCampo(i, { enLista: $any($event.target).checked })" aria-label="Ver en la tabla" />
+        <span class="acciones">
+          <button type="button" class="btn btn-icono btn-fantasma" [disabled]="i === 0" (click)="mover(i, -1)" aria-label="Subir"><app-icono nombre="arriba" [tam]="14" /></button>
+          <button type="button" class="btn btn-icono btn-fantasma" [disabled]="ultimo" (click)="mover(i, 1)" aria-label="Bajar"><app-icono nombre="abajo" [tam]="14" /></button>
+          <button type="button" class="btn btn-icono btn-fantasma btn-peligro" (click)="quitar(i)" aria-label="Quitar campo"><app-icono nombre="basura" [tam]="14" /></button>
+        </span>
+        @if (c.tipo === 'opcion') {
+          <div class="opciones">
+            <input [value]="c.opcionesTexto" placeholder="Opciones separadas por coma: Recibido, En proceso, Listo" (input)="cambiarCampo(i, { opcionesTexto: $any($event.target).value })" />
+            <label class="check"><input type="checkbox" [checked]="c.avisar" (change)="cambiarCampo(i, { avisar: $any($event.target).checked })" /> Avisar al cliente cuando cambie</label>
+          </div>
+        }
+      </div>
+    }
+    <button type="button" class="btn btn-chico" (click)="agregar()"><app-icono nombre="mas" [tam]="14" /> Agregar campo</button>
+  </div>
+  @if (modulo()) {
+    <p class="ayuda">Si quitas un campo, lo capturado en él se conserva pero deja de mostrarse.</p>
+  }
+
+  <div pie>
+    <button type="button" class="btn" (click)="cerrar.emit()">Cancelar</button>
+    <button type="button" class="btn btn-primario" [disabled]="guardando()" (click)="guardar()">{{ guardando() ? 'Guardando…' : 'Guardar módulo' }}</button>
+  </div>
+</app-modal>

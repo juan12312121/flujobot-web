@@ -173,6 +173,70 @@
       </label>
     }
 
+    @case ('registro') {
+      <label class="campo">
+        <span>Módulo</span>
+        <select [value]="n.datos.moduloId ?? ''" (change)="texto('moduloId', $event)">
+          <option value="">— Elige un módulo —</option>
+          @for (m of modulos(); track m.id) {
+            <option [value]="m.id">{{ m.nombre }}</option>
+          }
+        </select>
+        @if (modulos().length === 0) {
+          <small>Aún no tienes módulos. Créalos en Mi empresa → Secciones y palabras.</small>
+        }
+      </label>
+      @if (moduloDelBloque(); as m) {
+        <span class="etiqueta">Qué se guarda en cada campo</span>
+        @for (c of m.campos; track c.id) {
+          <label class="campo">
+            <span>{{ c.nombre }}{{ c.requerido ? ' *' : '' }}</span>
+            <input
+              [value]="n.datos.campos?.[c.id] ?? ''"
+              [placeholder]="c.tipo === 'telefono' ? 'Vacío = su número de WhatsApp' : c.tipo === 'opcion' ? c.opciones.join(' / ') : ejemploVariable"
+              list="variables-flujo"
+              (change)="campoRegistro(c.id, $event)"
+            />
+          </label>
+        }
+        <p class="ayuda">Usa variables de las preguntas anteriores, por ejemplo {{ '{{vehiculo}}' }}, o escribe un valor fijo (ej. "Recibido").</p>
+      }
+      <label class="campo">
+        <span>Confirmación</span>
+        <textarea rows="2" [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
+        <small>Usa {{ '{{folio}}' }} para darle su número de folio.</small>
+      </label>
+    }
+
+    @case ('consulta') {
+      <label class="campo">
+        <span>Módulo</span>
+        <select [value]="n.datos.moduloId ?? ''" (change)="texto('moduloId', $event)">
+          <option value="">— Elige un módulo —</option>
+          @for (m of modulos(); track m.id) {
+            <option [value]="m.id">{{ m.nombre }}</option>
+          }
+        </select>
+      </label>
+      @if (moduloDelBloque(); as m) {
+        <span class="etiqueta">Qué datos le mostramos</span>
+        @for (c of m.campos; track c.id) {
+          @if (c.tipo !== 'telefono') {
+            <label class="check"><input type="checkbox" [checked]="mostrarCampo(c.id, c.enLista)" (change)="alternarMostrar(c.id, $event)" /> {{ c.nombre }}</label>
+          }
+        }
+      }
+      <label class="campo">
+        <span>Encabezado</span>
+        <input [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)" placeholder="Esto es lo que encontré:" />
+      </label>
+      <label class="campo">
+        <span>Si no tiene nada</span>
+        <input [value]="n.datos.textoNada ?? ''" (change)="texto('textoNada', $event)" placeholder="No encontré registros con tus datos." />
+      </label>
+      <p class="ayuda">Busca los registros que hizo esta misma conversación o los que tienen su teléfono (también los que capturaste en el panel).</p>
+    }
+
     @case ('estado') {
       <label class="campo">
         <span>Qué mostrar</span>

@@ -27,10 +27,14 @@ const ACCIONES: Record<string, string> = {
   'campana.cancelar': 'Canceló una campaña',
   'empresa.editar': 'Cambió la configuración de la empresa',
   'empresa.cobros': 'Cambió los cobros en línea',
+  'modulo.crear': 'Creó un módulo',
+  'modulo.editar': 'Cambió un módulo',
+  'modulo.borrar': 'Borró un módulo',
+  'registro.estado': 'Cambió un registro de un módulo',
   'admin.empresa': 'El administrador de FlujoBot cambió la cuenta',
 };
 
-const ENTIDADES: Record<string, string> = { bot: 'Bots', pedido: 'Pedidos', cita: 'Citas', conversacion: 'Conversaciones', campana: 'Campañas', empresa: 'Empresa' };
+const ENTIDADES: Record<string, string> = { modulo: 'Módulos', bot: 'Bots', pedido: 'Pedidos', cita: 'Citas', conversacion: 'Conversaciones', campana: 'Campañas', empresa: 'Empresa' };
 
 /** Bitácora (solo administradores): quién cambió el flujo, quién atendió qué plática, quién movió un pedido. */
 @Component({

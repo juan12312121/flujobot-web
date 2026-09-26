@@ -68,6 +68,7 @@
 
           @case ('modulos') {
             <span class="etiqueta">Secciones del panel</span>
+            <p class="ayuda">Prende todas las que uses: un taller puede tener {{ b.terminos.citas.toLowerCase() }} y además vender con el catálogo y los pedidos.</p>
             <label class="check"><input type="checkbox" [checked]="b.modulos.catalogo" (change)="modulo('catalogo', $event)" /> {{ b.terminos.items }} (catálogo que muestra el bot)</label>
             <label class="check"><input type="checkbox" [checked]="b.modulos.pedidos" (change)="modulo('pedidos', $event)" /> {{ b.terminos.pedidos }} (pedidos, solicitudes o prospectos)</label>
             <label class="check"><input type="checkbox" [checked]="b.modulos.agenda" (change)="modulo('agenda', $event)" /> {{ b.terminos.citas }} (agenda)</label>
@@ -81,6 +82,8 @@
                 </label>
               }
             </div>
+
+            <app-modulos-propios />
           }
 
           @case ('conocimiento') {

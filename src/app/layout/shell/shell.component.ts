@@ -3,6 +3,8 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { SesionService } from '../../core/services/sesion/sesion.service';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { Modulos } from '../../core/models';
+import { ModulosService } from '../../core/services/modulos/modulos.service';
+import { ICONOS } from '../../core/iconos/iconos';
 import { NombreIcono } from '../../core/iconos/iconos';
 import { LogoEmpresaComponent } from '../../shared/components/logo-empresa/logo-empresa.component';
 import { IconoComponent } from '../../shared/components/icono/icono.component';
@@ -30,6 +32,7 @@ export class ShellComponent {
   private readonly router = inject(Router);
   protected readonly sesion = inject(SesionService);
   protected readonly menuAbierto = signal(false);
+  private readonly modulosPropios = inject(ModulosService);
 
   protected readonly enlaces = computed(() => {
     const t = this.sesion.terminos();
@@ -39,6 +42,11 @@ export class ShellComponent {
       { ruta: '/agenda', texto: t.citas, icono: 'calendario', modulo: 'agenda' },
       { ruta: '/catalogo', texto: t.items, icono: 'paquete', modulo: 'catalogo' },
       { ruta: '/pedidos', texto: t.pedidos, icono: 'carrito', modulo: 'pedidos' },
+      // Módulos que armó la empresa (órdenes de servicio, inventario...)
+      ...this.modulosPropios
+        .lista()
+        .filter((m) => m.activo)
+        .map((m): Enlace => ({ ruta: `/m/${m.clave}`, texto: m.nombre, icono: (m.icono in ICONOS ? m.icono : 'registro') as NombreIcono })),
       { ruta: '/conversaciones', texto: 'Conversaciones', icono: 'chat' },
       { ruta: '/campanas', texto: 'Campañas', icono: 'megafono' },
       { ruta: '/encuestas', texto: 'Encuestas', icono: 'estrella' },
@@ -65,6 +73,7 @@ export class ShellComponent {
   constructor() {
     // La personalización y los permisos pudieron cambiar en otra sesión: traer lo vigente
     this.auth.refrescar().catch(() => {});
+    this.modulosPropios.cargar().catch(() => {});
   }
 
   protected salir(): void {

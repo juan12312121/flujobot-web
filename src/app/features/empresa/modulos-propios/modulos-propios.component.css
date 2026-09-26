@@ -1,0 +1,110 @@
+:host {
+  display: block;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--borde);
+}
+
+.encabezado {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.encabezado .ayuda {
+  margin: 4px 0 0;
+}
+
+.plantillas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.plantilla {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: var(--superficie);
+  color: var(--texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.plantilla:hover:not(:disabled) {
+  border-color: var(--primario);
+}
+
+.plantilla small {
+  color: var(--suave);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.plantilla.blanco {
+  border-style: dashed;
+}
+
+.ico {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--primario-claro);
+  color: var(--primario-osc);
+  flex-shrink: 0;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+
+.lista li.inactivo {
+  opacity: 0.6;
+}
+
+.datos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.check {
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.vacio {
+  border-style: dashed !important;
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .lista li {
+    flex-wrap: wrap;
+  }
+}

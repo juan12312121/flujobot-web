@@ -1,0 +1,52 @@
+<div class="encabezado">
+  <div>
+    <span class="etiqueta">Módulos propios</span>
+    <p class="ayuda">
+      Crea secciones a la medida de tu negocio (órdenes de servicio, inventario, membresías…) con los datos que necesites. Aparecen en el menú y
+      el bot puede llenarlas y consultarlas. Se guardan al momento.
+    </p>
+  </div>
+  <button type="button" class="btn btn-primario btn-chico" (click)="eligiendo.set(!eligiendo())"><app-icono nombre="mas" [tam]="14" /> Nuevo módulo</button>
+</div>
+
+@if (eligiendo()) {
+  <div class="plantillas">
+    @for (p of plantillas(); track p.id) {
+      <button type="button" class="plantilla" [disabled]="creando() !== null" (click)="desdePlantilla(p)">
+        <span class="ico"><app-icono [nombre]="icono(p.icono)" [tam]="18" /></span>
+        <strong>{{ creando() === p.id ? 'Creando…' : p.nombre }}</strong>
+        <small>{{ p.descripcion }}</small>
+      </button>
+    }
+    <button type="button" class="plantilla blanco" (click)="enBlanco()">
+      <span class="ico"><app-icono nombre="mas" [tam]="18" /></span>
+      <strong>En blanco</strong>
+      <small>Tú eliges el nombre y los campos.</small>
+    </button>
+  </div>
+}
+
+<ul class="lista">
+  @for (m of api.lista(); track m.id) {
+    <li [class.inactivo]="!m.activo">
+      <span class="ico"><app-icono [nombre]="icono(m.icono)" [tam]="18" /></span>
+      <div class="datos">
+        <strong>{{ m.nombre }}</strong>
+        <small class="suave">{{ m.campos.length }} campos · {{ m.registros ?? 0 }} registros · folios {{ m.prefijo }}-000001</small>
+      </div>
+      <label class="check" title="Mostrar en el menú">
+        <input type="checkbox" [checked]="m.activo" (change)="alternar(m)" /> En el menú
+      </label>
+      <button type="button" class="btn btn-chico" (click)="editando.set(m)">Editar campos</button>
+      <button type="button" class="btn btn-chico btn-fantasma btn-peligro" (click)="borrar(m)" aria-label="Borrar módulo"><app-icono nombre="basura" [tam]="15" /></button>
+    </li>
+  } @empty {
+    @if (!eligiendo()) {
+      <li class="vacio suave">Aún no tienes módulos propios. Por ejemplo, un taller puede llevar sus órdenes de servicio aquí además de vender con el catálogo.</li>
+    }
+  }
+</ul>
+
+@if (editando(); as e) {
+  <app-modulo-editor [modulo]="e === 'nuevo' ? null : e" (cerrar)="editando.set(null)" />
+}

@@ -175,6 +175,8 @@ export type TipoNodo =
   | 'esperar'
   | 'encuesta'
   | 'permiso'
+  | 'registro'
+  | 'consulta'
   | 'humano'
   | 'fin';
 
@@ -229,6 +231,12 @@ export interface DatosNodo {
   /** Pedir permiso. */
   textoSi?: string;
   textoNo?: string;
+  /** Guardar en módulo / Consultar módulo. */
+  moduloId?: string;
+  /** Guardar en módulo: id del campo → texto con variables ("{{vehiculo}}"). */
+  campos?: Record<string, string>;
+  /** Consultar módulo: campos que se le muestran al cliente (vacío = los de la lista). */
+  mostrar?: string[];
 }
 
 export interface Posicion {
@@ -579,6 +587,62 @@ export interface Actividad {
   detalle: string;
   fecha: string;
 }
+
+// ───────────── Módulos personalizados ─────────────
+
+export type TipoCampo = 'texto' | 'textoLargo' | 'numero' | 'dinero' | 'fecha' | 'opcion' | 'sino' | 'telefono' | 'email' | 'imagen';
+
+export interface CampoModulo {
+  id: string;
+  nombre: string;
+  tipo: TipoCampo;
+  opciones: string[];
+  requerido: boolean;
+  /** Se ve como columna en la tabla (y en lo que el bot le muestra al cliente). */
+  enLista: boolean;
+  /** Solo en "opcion": al cambiarlo se le avisa al cliente. */
+  avisar: boolean;
+}
+
+export interface Modulo {
+  id: string;
+  nombre: string;
+  singular: string;
+  clave: string;
+  icono: string;
+  descripcion: string;
+  prefijo: string;
+  campos: CampoModulo[];
+  orden: number;
+  activo: boolean;
+  registros?: number;
+}
+
+export interface PlantillaModulo {
+  id: string;
+  nombre: string;
+  singular: string;
+  icono: string;
+  prefijo: string;
+  descripcion: string;
+  campos: CampoModulo[];
+}
+
+export interface RegistroModulo {
+  id: string;
+  moduloId: string;
+  folio: string;
+  datos: Record<string, unknown>;
+  canal: string;
+  contacto: string;
+  nombreContacto: string;
+  creadoPor: string;
+  createdAt: string;
+  updatedAt: string;
+  aviso?: { enviado: boolean; error?: string; motivo?: string };
+}
+
+export type DatosModulo = Pick<Modulo, 'nombre' | 'singular' | 'icono' | 'descripcion' | 'prefijo' | 'campos'>;
 
 export type ProveedorPago = 'ninguno' | 'mercadopago' | 'stripe';
 

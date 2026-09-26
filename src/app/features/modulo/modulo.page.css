@@ -1,0 +1,62 @@
+.ancha {
+  max-width: 1280px;
+}
+
+h1 {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.filtros {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.filtros input {
+  max-width: 340px;
+}
+
+.filtros select {
+  width: auto;
+}
+
+.cuenta {
+  margin-left: auto;
+  font-size: 13px;
+}
+
+.desplazable {
+  overflow-x: auto;
+}
+
+.fila {
+  cursor: pointer;
+}
+
+.fila:hover td {
+  background: var(--superficie-2);
+}
+
+td small {
+  display: block;
+  font-size: 11.5px;
+}
+
+.miniatura {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--suave);
+  text-align: center;
+}

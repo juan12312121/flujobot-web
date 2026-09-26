@@ -1,0 +1,90 @@
+.fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr 110px;
+  gap: 12px;
+}
+
+.iconos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 16px;
+}
+
+.iconos button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  background: var(--superficie);
+  color: var(--texto-2);
+  cursor: pointer;
+}
+
+.iconos button.elegido {
+  border-color: var(--primario);
+  background: var(--primario-claro);
+  color: var(--primario-osc);
+}
+
+.campos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cabecera,
+.campo-fila {
+  display: grid;
+  grid-template-columns: 1fr 170px 52px 60px 104px;
+  gap: 8px;
+  align-items: center;
+}
+
+.cabecera {
+  color: var(--suave);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.campo-fila input[type='checkbox'] {
+  justify-self: center;
+}
+
+.acciones {
+  display: flex;
+  gap: 2px;
+}
+
+.opciones {
+  display: flex;
+  grid-column: 1 / -1;
+  gap: 10px;
+  align-items: center;
+  padding: 0 0 6px 14px;
+  border-left: 2px solid var(--primario-claro);
+}
+
+.opciones input:not([type='checkbox']) {
+  flex: 1;
+}
+
+.opciones .check {
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .fila {
+    grid-template-columns: 1fr;
+  }
+  .cabecera {
+    display: none;
+  }
+  .campo-fila {
+    grid-template-columns: 1fr 1fr;
+  }
+}

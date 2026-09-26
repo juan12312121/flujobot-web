@@ -1,0 +1,83 @@
+<div class="pagina ancha">
+  @if (modulo(); as m) {
+    <div class="encabezado-pagina">
+      <div>
+        <h1><app-icono [nombre]="icono()" [tam]="22" /> {{ m.nombre }}</h1>
+        <p>{{ m.descripcion || 'Módulo de tu empresa. Captura aquí o deja que el bot registre con el bloque "Guardar en módulo".' }}</p>
+      </div>
+      <button type="button" class="btn btn-primario" (click)="editando.set('nuevo')"><app-icono nombre="mas" [tam]="15" /> Agregar {{ m.singular.toLowerCase() }}</button>
+    </div>
+
+    <div class="filtros">
+      <input type="search" [value]="texto()" placeholder="Buscar por folio o cualquier dato…" (change)="buscar($event)" />
+      @if (campoFiltro(); as f) {
+        <select [value]="valorFiltro()" (change)="filtrar($event)" [attr.aria-label]="f.nombre">
+          <option value="">{{ f.nombre }}: todos</option>
+          @for (o of f.opciones; track o) {
+            <option [value]="o">{{ o }}</option>
+          }
+        </select>
+      }
+      <span class="suave cuenta">{{ registros().length }} {{ registros().length === 1 ? m.singular.toLowerCase() : m.nombre.toLowerCase() }}</span>
+    </div>
+
+    <div class="tarjeta">
+      @if (registros().length === 0) {
+        <div class="vacio">
+          <app-icono [nombre]="icono()" [tam]="28" />
+          <h2>{{ texto() || valorFiltro() ? 'Nada coincide con la búsqueda' : 'Sin registros todavía' }}</h2>
+          <p>Captura el primero con "Agregar {{ m.singular.toLowerCase() }}", o agrega el bloque <b>Guardar en módulo</b> a tu bot.</p>
+        </div>
+      } @else {
+        <div class="desplazable">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>Folio</th>
+                @for (c of columnas(); track c.id) {
+                  <th [class.num]="c.tipo === 'dinero' || c.tipo === 'numero'">{{ c.nombre }}</th>
+                }
+                <th>Alta</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of registros(); track r.id) {
+                <tr class="fila" (click)="editando.set(r)">
+                  <td><b>{{ r.folio }}</b></td>
+                  @for (c of columnas(); track c.id) {
+                    <td [class.num]="c.tipo === 'dinero' || c.tipo === 'numero'">
+                      @if (c.tipo === 'imagen' && r.datos[c.id]) {
+                        <img class="miniatura" [src]="$any(r.datos[c.id])" alt="" loading="lazy" />
+                      } @else if (c.tipo === 'opcion' && r.datos[c.id]) {
+                        <span class="insignia" [class.insignia-verde]="c.avisar">{{ valor(c, r) }}</span>
+                      } @else {
+                        {{ valor(c, r) }}
+                      }
+                    </td>
+                  }
+                  <td class="suave">
+                    {{ r.createdAt | date: 'd MMM, HH:mm' }}
+                    <small>{{ canales[r.canal] ?? r.canal }}</small>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    @if (editando(); as e) {
+      <app-registro-form [modulo]="m" [registro]="e === 'nuevo' ? null : e" (guardado)="guardado($event)" (borrado)="borrado()" (cerrar)="editando.set(null)" />
+    }
+  } @else if (cargando()) {
+    <p class="suave">Cargando…</p>
+  } @else {
+    <div class="tarjeta vacio">
+      <h2>Este módulo ya no existe</h2>
+      @if (esAdmin()) {
+        <p>Puedes crear módulos en Mi empresa → Secciones y palabras.</p>
+      }
+    </div>
+  }
+</div>

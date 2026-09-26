@@ -1,0 +1,79 @@
+<app-modal [titulo]="registro() ? modulo().singular + ' ' + registro()!.folio : 'Agregar ' + modulo().singular.toLowerCase()" [ancho]="620" (cerrar)="cerrar.emit()">
+  @if (registro(); as r) {
+    <p class="origen suave">
+      Alta {{ r.createdAt | date: "d 'de' MMMM, HH:mm" }}
+      @if (r.canal !== 'panel') {
+        · la registró el bot por {{ r.canal }}{{ r.nombreContacto ? ' (' + r.nombreContacto + ')' : '' }}
+      } @else if (r.creadoPor) {
+        · por {{ r.creadoPor }}
+      }
+    </p>
+  }
+
+  <form class="campos" (submit)="$event.preventDefault(); guardar()">
+    @for (c of modulo().campos; track c.id) {
+      <div class="campo" [class.ancho]="c.tipo === 'textoLargo' || c.tipo === 'imagen'" [class.con-error]="errores()[c.id]">
+        <span>{{ c.nombre }}{{ c.requerido ? ' *' : '' }}</span>
+        @switch (c.tipo) {
+          @case ('textoLargo') {
+            <textarea [attr.aria-label]="c.nombre" rows="3" [value]="valor(c)" (input)="cambiar(c, $any($event.target).value)"></textarea>
+          }
+          @case ('numero') {
+            <input [attr.aria-label]="c.nombre" type="number" step="any" [value]="valor(c)" (input)="cambiar(c, $any($event.target).value)" />
+          }
+          @case ('dinero') {
+            <input [attr.aria-label]="c.nombre" type="number" step="0.01" min="0" [value]="valor(c)" (input)="cambiar(c, $any($event.target).value)" placeholder="0.00" />
+          }
+          @case ('fecha') {
+            <input [attr.aria-label]="c.nombre" type="date" [value]="valor(c)" (change)="cambiar(c, $any($event.target).value)" />
+          }
+          @case ('opcion') {
+            <select [attr.aria-label]="c.nombre" [value]="valor(c)" (change)="cambiar(c, $any($event.target).value)">
+              <option value="">— Elige —</option>
+              @for (o of c.opciones; track o) {
+                <option [value]="o">{{ o }}</option>
+              }
+            </select>
+          }
+          @case ('sino') {
+            <label class="check"><input type="checkbox" [checked]="!!datos()[c.id]" (change)="cambiar(c, $any($event.target).checked)" /> Sí</label>
+          }
+          @case ('telefono') {
+            <input [attr.aria-label]="c.nombre" type="tel" inputmode="tel" [value]="valor(c)" (input)="cambiar(c, $any($event.target).value)" placeholder="10 dígitos" />
+          }
+          @case ('email') {
+            <input [attr.aria-label]="c.nombre" type="email" [value]="valor(c)" (input)="cambiar(c, $any($event.target).value)" />
+          }
+          @case ('imagen') {
+            <app-subir-imagen uso="mensajes" [url]="valor(c)" (cambio)="cambiar(c, $event)" />
+          }
+          @default {
+            <input [attr.aria-label]="c.nombre" [value]="valor(c)" (input)="cambiar(c, $any($event.target).value)" />
+          }
+        }
+        @if (errores()[c.id]; as e) {
+          <small class="error">{{ e }}</small>
+        } @else if (c.avisar) {
+          <small>Al cambiarlo se le avisa al cliente.</small>
+        }
+      </div>
+    }
+    <button type="submit" hidden></button>
+  </form>
+
+  @if (registro() && hayAvisos()) {
+    <label class="check aviso">
+      <input type="checkbox" [checked]="avisar()" (change)="avisar.set($any($event.target).checked)" />
+      Avisar al cliente por WhatsApp o por donde escribió si cambio el estado
+    </label>
+  }
+
+  <div pie>
+    @if (registro()) {
+      <button type="button" class="btn btn-fantasma btn-peligro" (click)="borrar()"><app-icono nombre="basura" [tam]="15" /> Borrar</button>
+    }
+    <span class="espacio"></span>
+    <button type="button" class="btn" (click)="cerrar.emit()">Cancelar</button>
+    <button type="button" class="btn btn-primario" [disabled]="guardando()" (click)="guardar()">{{ guardando() ? 'Guardando…' : 'Guardar' }}</button>
+  </div>
+</app-modal>

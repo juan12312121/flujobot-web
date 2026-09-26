@@ -21,6 +21,7 @@ export const TEXTOS_AVISO: { clave: string; etiqueta: string; texto: string }[] 
     etiqueta: 'Recordatorio una hora antes',
     texto: 'Hola {{nombre}}, tu {{cita}} {{servicio}} es *hoy a las {{hora}}* (en una hora).\n\nResponde *1* para confirmar o *2* para cancelar.',
   },
+  { clave: 'registro.cambio', etiqueta: 'Cambio en un módulo (p. ej. Estado)', texto: 'Hola {{nombre}}, tu {{registro}} *{{folio}}* ahora está: *{{valor}}*.' },
   { clave: 'encuesta.pedido', etiqueta: 'Encuesta al entregar', texto: '¿Cómo calificarías tu {{pedido}} *{{folio}}*? Responde con un número del *1* (malo) al *5* (excelente).' },
 ];
 

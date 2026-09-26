@@ -1,0 +1,47 @@
+.origen {
+  margin: -4px 0 12px;
+  font-size: 12.5px;
+}
+
+.campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 14px;
+}
+
+.campo.ancho {
+  grid-column: 1 / -1;
+}
+
+.con-error input,
+.con-error select,
+.con-error textarea {
+  border-color: var(--peligro);
+}
+
+.error {
+  color: var(--peligro) !important;
+}
+
+.aviso {
+  margin-top: 4px;
+  color: var(--suave);
+  font-size: 13px;
+}
+
+.espacio {
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .campos {
+    grid-template-columns: 1fr;
+  }
+}
+
+[pie] {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}

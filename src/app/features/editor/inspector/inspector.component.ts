@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ModulosService } from '../../../core/services/modulos/modulos.service';
 import { EditorStore } from '../editor.store';
 import { SesionService } from '../../../core/services/sesion/sesion.service';
 import { TareaN8nComponent } from '../tarea-n8n/tarea-n8n.component';
@@ -39,6 +40,14 @@ export class InspectorComponent {
   protected readonly terminos = inject(SesionService).terminos;
   protected readonly tipo = computed(() => (this.nodo() ? TIPOS[this.nodo()!.tipo] : null));
   protected readonly problemas = computed(() => this.store.problemas().filter((p) => p.nodoId === this.nodo()?.id));
+  private readonly modulosApi = inject(ModulosService);
+  protected readonly modulos = this.modulosApi.lista;
+  protected readonly ejemploVariable = 'Ej. {{vehiculo}}';
+  protected readonly moduloDelBloque = computed(() => this.modulos().find((m) => m.id === this.nodo()?.datos.moduloId) ?? null);
+
+  constructor() {
+    this.modulosApi.cargar().catch(() => {});
+  }
 
   /** Variables que se pueden usar con {{ }}: las del sistema + las que guardan las preguntas del flujo. */
   protected readonly variables = computed(() => {
@@ -73,6 +82,28 @@ export class InspectorComponent {
 
   protected casilla(campo: keyof DatosNodo, evento: Event): void {
     this.cambiar(campo, (evento.target as HTMLInputElement).checked);
+  }
+
+  // ───── Guardar en módulo / Consultar módulo ─────
+
+  protected campoRegistro(campoId: string, evento: Event): void {
+    const valor = (evento.target as HTMLInputElement).value.trim();
+    const { [campoId]: _, ...resto } = this.nodo()?.datos.campos ?? {};
+    this.cambiar('campos', valor ? { ...resto, [campoId]: valor } : resto);
+  }
+
+  /** Sin selección propia se muestran los campos "en tabla" del módulo. */
+  protected mostrarCampo(campoId: string, enLista: boolean): boolean {
+    const lista = this.nodo()?.datos.mostrar;
+    return lista?.length ? lista.includes(campoId) : enLista;
+  }
+
+  protected alternarMostrar(campoId: string, evento: Event): void {
+    const m = this.moduloDelBloque();
+    if (!m) return;
+    const actual = m.campos.filter((c) => this.mostrarCampo(c.id, c.enLista)).map((c) => c.id);
+    const activo = (evento.target as HTMLInputElement).checked;
+    this.cambiar('mostrar', activo ? [...new Set([...actual, campoId])] : actual.filter((id) => id !== campoId));
   }
 
   // ───── Esperar: se guarda en minutos, se edita en minutos / horas / días ─────
