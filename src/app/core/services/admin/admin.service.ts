@@ -1,14 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../api/api.service';
-import { ClavePlan, Empresa, EmpresaAdmin } from '../../models';
-
-export interface CambiosEmpresaAdmin {
-  activa?: boolean;
-  motivo?: string;
-  plan?: ClavePlan;
-  vence?: string;
-  sumarDias?: number;
-}
+import { Empresa, EmpresaAdmin } from '../../models';
 
 /** Panel del superadministrador de FlujoBot (todas las empresas). */
 @Injectable({ providedIn: 'root' })
@@ -19,7 +11,8 @@ export class AdminService {
     return this.api.get('/admin/empresas', { params: { texto } });
   }
 
-  editarEmpresa(id: string, cambios: CambiosEmpresaAdmin): Promise<Empresa> {
+  /** Suspender (con motivo) o reactivar. */
+  editarEmpresa(id: string, cambios: { activa: boolean; motivo?: string }): Promise<Empresa> {
     return this.api.patch(`/admin/empresas/${id}`, cambios);
   }
 }

@@ -72,7 +72,6 @@ export interface Empresa {
   /** Lo que sabe el bloque "Responder con IA": precios, políticas, preguntas frecuentes... */
   conocimiento: string;
   avisos: ConfigAvisos;
-  plan: { clave: ClavePlan; vence: string | null };
   activa?: boolean;
 }
 
@@ -477,7 +476,6 @@ export interface Resumen {
   proximasCitas: Cita[];
   satisfaccion: ResumenEncuestas | null;
   carritosRecuperados: number;
-  plan: { nombre: string; vigente: boolean; diasRestantes: number | null; clave: ClavePlan; uso: UsoPlan; limites: LimitesPlan } | null;
 }
 
 // ───────────── Crecimiento ─────────────
@@ -531,7 +529,6 @@ export interface ConteoSegmento {
   destinatarios: number;
   contactos: number;
   conPermiso: number;
-  restanteDelMes: number;
   segmentos: Record<TipoSegmento, string>;
   canales: string[];
 }
@@ -557,49 +554,6 @@ export interface Actividad {
   fecha: string;
 }
 
-export type ClavePlan = 'prueba' | 'basico' | 'pro';
-
-export interface UsoPlan {
-  conversaciones: number;
-  ia: number;
-  campanas: number;
-  bots: number;
-}
-
-export interface LimitesPlan {
-  conversaciones: number;
-  ia: number;
-  campanas: number;
-  bots: number;
-}
-
-export interface PlanDisponible {
-  clave: ClavePlan;
-  nombre: string;
-  precio: number;
-  bots: number;
-  conversaciones: number;
-  ia: number;
-  campanas: number;
-  canales: string[];
-  diasPrueba?: number;
-}
-
-export interface EstadoPlan {
-  clave: ClavePlan;
-  nombre: string;
-  precio: number;
-  vence: string | null;
-  diasRestantes: number | null;
-  vigente: boolean;
-  activa: boolean;
-  uso: UsoPlan;
-  limites: LimitesPlan;
-  canales: string[];
-  planes: PlanDisponible[];
-  pagoEnLinea: boolean;
-}
-
 export type ProveedorPago = 'ninguno' | 'mercadopago' | 'stripe';
 
 export interface EstadoCobros {
@@ -616,12 +570,6 @@ export interface EmpresaAdmin {
   giro: Giro;
   activa: boolean;
   suspendidaMotivo: string;
-  plan: ClavePlan;
-  planNombre: string;
-  vence: string | null;
-  vigente: boolean;
   bots: number;
-  uso: { conversaciones: number; ia: number; campanas: number };
-  limites: { conversaciones: number; ia: number; campanas: number };
   creada: string;
 }

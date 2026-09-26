@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SesionService } from '../../core/services/sesion/sesion.service';
 import { AuthService } from '../../core/services/auth/auth.service';
-import { GestionService } from '../../core/services/gestion/gestion.service';
-import { EstadoPlan, Modulos } from '../../core/models';
+import { Modulos } from '../../core/models';
 import { NombreIcono } from '../../core/iconos/iconos';
 import { LogoEmpresaComponent } from '../../shared/components/logo-empresa/logo-empresa.component';
 import { IconoComponent } from '../../shared/components/icono/icono.component';
@@ -31,19 +30,6 @@ export class ShellComponent {
   private readonly router = inject(Router);
   protected readonly sesion = inject(SesionService);
   protected readonly menuAbierto = signal(false);
-  protected readonly plan = signal<EstadoPlan | null>(null);
-  /** Aviso arriba de todo: plan vencido o prueba por terminar. */
-  protected readonly avisoPlan = computed(() => {
-    const p = this.plan();
-    if (!p) return null;
-    if (!p.vigente) return { urgente: true, texto: 'Tu plan venció: tus bots ya no abren conversaciones nuevas.' };
-    if (p.clave === 'prueba' && p.diasRestantes !== null && p.diasRestantes <= 5) {
-      return { urgente: false, texto: `Te quedan ${p.diasRestantes} día${p.diasRestantes === 1 ? '' : 's'} de prueba gratis.` };
-    }
-    const lleno = (['conversaciones', 'ia'] as const).find((r) => p.limites[r] && p.uso[r] >= p.limites[r]);
-    if (lleno) return { urgente: true, texto: `Llegaste al límite de ${lleno === 'ia' ? 'respuestas con IA' : 'conversaciones'} de este mes.` };
-    return null;
-  });
 
   protected readonly enlaces = computed(() => {
     const t = this.sesion.terminos();
@@ -59,7 +45,6 @@ export class ShellComponent {
       { ruta: '/equipo', texto: 'Equipo', icono: 'equipo', soloAdmin: true },
       { ruta: '/actividad', texto: 'Actividad', icono: 'historial', soloAdmin: true },
       { ruta: '/empresa', texto: 'Mi empresa', icono: 'ajustes', soloAdmin: true },
-      { ruta: '/plan', texto: 'Mi plan', icono: 'tarjeta' },
       { ruta: '/admin', texto: 'Administración', icono: 'escudo', soloSuperadmin: true },
     ];
     const modulos = this.sesion.modulos();
@@ -80,10 +65,6 @@ export class ShellComponent {
   constructor() {
     // La personalización y los permisos pudieron cambiar en otra sesión: traer lo vigente
     this.auth.refrescar().catch(() => {});
-    inject(GestionService)
-      .plan()
-      .then((p) => this.plan.set(p))
-      .catch(() => {});
   }
 
   protected salir(): void {

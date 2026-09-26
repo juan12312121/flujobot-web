@@ -27,7 +27,6 @@ const ACCIONES: Record<string, string> = {
   'campana.cancelar': 'Canceló una campaña',
   'empresa.editar': 'Cambió la configuración de la empresa',
   'empresa.cobros': 'Cambió los cobros en línea',
-  'plan.pagar': 'Inició el pago del plan',
   'admin.empresa': 'El administrador de FlujoBot cambió la cuenta',
 };
 

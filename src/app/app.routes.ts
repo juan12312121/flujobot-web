@@ -36,7 +36,6 @@ export const routes: Routes = [
       { path: 'campanas', title: 'Campañas · FlujoBot', loadComponent: () => import('./features/campanas/campanas.page').then((m) => m.CampanasPage) },
       { path: 'encuestas', title: 'Encuestas · FlujoBot', loadComponent: () => import('./features/encuestas/encuestas.page').then((m) => m.EncuestasPage) },
       { path: 'actividad', title: 'Actividad · FlujoBot', canActivate: [adminGuard], loadComponent: () => import('./features/actividad/actividad.page').then((m) => m.ActividadPage) },
-      { path: 'plan', title: 'Mi plan · FlujoBot', loadComponent: () => import('./features/plan/plan.page').then((m) => m.PlanPage) },
       { path: 'admin', title: 'Administración · FlujoBot', canActivate: [superadminGuard], loadComponent: () => import('./features/admin/admin.page').then((m) => m.AdminPage) },
     ],
   },
