@@ -22,6 +22,8 @@
         <button type="button" role="tab" [class.activa]="seccion() === 'modulos'" (click)="seccion.set('modulos')">Secciones y palabras</button>
         <button type="button" role="tab" [class.activa]="seccion() === 'horario'" (click)="seccion.set('horario')">Horario de atención</button>
         <button type="button" role="tab" [class.activa]="seccion() === 'conocimiento'" (click)="seccion.set('conocimiento')">Información para la IA</button>
+        <button type="button" role="tab" [class.activa]="seccion() === 'avisos'" (click)="seccion.set('avisos')">Avisos y recordatorios</button>
+        <button type="button" role="tab" [class.activa]="seccion() === 'cobros'" (click)="seccion.set('cobros')">Cobros en línea</button>
       </nav>
 
       <section class="tarjeta contenido">
@@ -143,6 +145,31 @@
             @if (!(b.conocimiento ?? '').trim()) {
               <button type="button" class="btn btn-chico" (click)="usarGuia()">Empezar con un ejemplo</button>
             }
+          }
+
+          @case ('avisos') {
+            <p class="ayuda">Mensajes que el bot le manda al {{ b.terminos.cliente.toLowerCase() }} por su cuenta, por el mismo canal donde escribió.</p>
+            <div class="interruptores">
+              <label class="check"><input type="checkbox" [checked]="b.avisos.pedidos" (change)="aviso('pedidos', $event)" /> Avisar cuando cambie el estado de su {{ b.terminos.pedido.toLowerCase() }}</label>
+              <label class="check"><input type="checkbox" [checked]="b.avisos.citas" (change)="aviso('citas', $event)" /> Avisar cuando confirmes o canceles su {{ b.terminos.cita.toLowerCase() }}</label>
+              <label class="check"><input type="checkbox" [checked]="b.avisos.recordatorioDia" (change)="aviso('recordatorioDia', $event)" /> Recordatorio un día antes de la {{ b.terminos.cita.toLowerCase() }} (con "1 confirmar / 2 cancelar")</label>
+              <label class="check"><input type="checkbox" [checked]="b.avisos.recordatorioHora" (change)="aviso('recordatorioHora', $event)" /> Recordatorio una hora antes</label>
+              <label class="check"><input type="checkbox" [checked]="b.avisos.encuestaAlEntregar" (change)="aviso('encuestaAlEntregar', $event)" /> Pedir calificación del 1 al 5 al marcar un {{ b.terminos.pedido.toLowerCase() }} como entregado</label>
+            </div>
+            <details class="textos-aviso">
+              <summary>Cambiar los textos</summary>
+              <p class="ayuda">Vacío = el texto de ejemplo. Variables: {{ '{{nombre}}' }}, {{ '{{folio}}' }}, {{ '{{total}}' }}, {{ '{{pedido}}' }}, {{ '{{cita}}' }}, {{ '{{servicio}}' }}, {{ '{{fecha}}' }}, {{ '{{hora}}' }}.</p>
+              @for (t of textosAviso; track t.clave) {
+                <label class="campo">
+                  <span>{{ t.etiqueta }}</span>
+                  <textarea rows="2" maxlength="600" [value]="b.avisos.textos[t.clave] ?? ''" [placeholder]="t.texto" (input)="textoAviso(t.clave, $event)"></textarea>
+                </label>
+              }
+            </details>
+          }
+
+          @case ('cobros') {
+            <app-cobros />
           }
 
           @case ('horario') {

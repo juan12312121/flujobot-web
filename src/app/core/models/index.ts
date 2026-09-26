@@ -20,6 +20,8 @@ export interface Usuario {
   email: string;
   rol: Rol;
   createdAt?: string;
+  /** Administrador de toda la plataforma FlujoBot (correos en SUPERADMINS del servidor). */
+  esSuperadmin?: boolean;
 }
 
 export type Giro = 'tienda' | 'restaurante' | 'belleza' | 'salud' | 'servicios' | 'educacion' | 'inmobiliaria' | 'otro';
@@ -69,6 +71,19 @@ export interface Empresa {
   zonaHoraria: string;
   /** Lo que sabe el bloque "Responder con IA": precios, políticas, preguntas frecuentes... */
   conocimiento: string;
+  avisos: ConfigAvisos;
+  plan: { clave: ClavePlan; vence: string | null };
+  activa?: boolean;
+}
+
+/** Qué le avisa el bot al cliente por su cuenta y con qué textos. */
+export interface ConfigAvisos {
+  pedidos: boolean;
+  citas: boolean;
+  recordatorioDia: boolean;
+  recordatorioHora: boolean;
+  encuestaAlEntregar: boolean;
+  textos: Record<string, string>;
 }
 
 export interface CambiosEmpresa {
@@ -82,6 +97,7 @@ export interface CambiosEmpresa {
   modulos?: Partial<Modulos>;
   horario?: Partial<Horario>;
   conocimiento?: string;
+  avisos?: Partial<ConfigAvisos>;
 }
 
 export interface OpcionGiro {
@@ -130,6 +146,10 @@ export type TipoNodo =
   | 'ia'
   | 'condicion'
   | 'webhook'
+  | 'estado'
+  | 'esperar'
+  | 'encuesta'
+  | 'permiso'
   | 'humano'
   | 'fin';
 
@@ -169,6 +189,21 @@ export interface DatosNodo {
   operador?: 'igual' | 'distinto' | 'contiene' | 'mayor' | 'menor' | 'existe';
   valor?: string;
   url?: string;
+  /** Pedido: manda link de pago (Mercado Pago o Stripe). */
+  cobrar?: boolean;
+  /** Consultar: qué mostrar. */
+  que?: 'ambos' | 'pedidos' | 'citas';
+  textoNada?: string;
+  /** Esperar: minutos antes de seguir por "No respondió". */
+  minutos?: number;
+  /** Encuesta. */
+  pedirComentario?: boolean;
+  textoComentario?: string;
+  textoBuena?: string;
+  textoMala?: string;
+  /** Pedir permiso. */
+  textoSi?: string;
+  textoNo?: string;
 }
 
 export interface Posicion {
@@ -218,8 +253,27 @@ export interface Bot {
   n8nWorkflowId: string | null;
   webhookUrl: string | null;
   web?: ChatWeb;
+  telegram?: { activo: boolean; usuario: string };
+  meta?: { activo: boolean; paginaId: string; instagram: boolean };
+  recuperacion?: Recuperacion;
   createdAt: string;
   updatedAt: string;
+}
+
+/** Carrito abandonado: a las `horas` sin respuesta se le escribe al cliente una vez. */
+export interface Recuperacion {
+  activo: boolean;
+  horas: number;
+  texto: string;
+}
+
+/** Cada publicación guardada de un bot. */
+export interface VersionBot {
+  id: string;
+  version: number;
+  publicadaPor: string;
+  createdAt: string;
+  activa: boolean;
 }
 
 /** El globito de chat que el negocio pega en su página. */
@@ -336,16 +390,20 @@ export interface ResultadoSimulacion {
 export type EstadoConversacion = 'nueva' | 'activa' | 'terminada' | 'humano';
 
 export interface MensajeHistorial {
-  de: 'contacto' | 'bot';
+  de: 'contacto' | 'bot' | 'asesor' | 'sistema';
+  autor?: string;
   texto: string;
   url?: string;
   fecha: string;
 }
 
+export type Canal = 'whatsapp' | 'web' | 'telegram' | 'messenger' | 'instagram';
+
 export interface Conversacion {
   id: string;
   botId: string;
-  canal: 'whatsapp' | 'web';
+  canal: Canal;
+  atendidaPor?: string;
   contacto: string;
   nombre: string;
   estado: EstadoConversacion;
@@ -357,7 +415,8 @@ export interface Conversacion {
   variables?: Record<string, unknown>;
 }
 
-export type EstadoPedido = 'nuevo' | 'confirmado' | 'enviado' | 'entregado' | 'cancelado';
+export type EstadoPedido = 'nuevo' | 'confirmado' | 'preparando' | 'enviado' | 'listo' | 'entregado' | 'cancelado';
+export type EstadoPago = 'sin_cobro' | 'pendiente' | 'pagado' | 'fallido';
 
 export interface Pedido {
   id: string;
@@ -369,7 +428,12 @@ export interface Pedido {
   total: number;
   datos: Record<string, unknown>;
   estado: EstadoPedido;
+  canal: Canal;
+  pago?: { estado: EstadoPago; proveedor: string; url: string; pagadoEn: string | null };
+  recuperado?: boolean;
   createdAt: string;
+  /** Solo al cambiar el estado: si se le avisó al cliente. */
+  aviso?: { enviado: boolean; error?: string };
 }
 
 export type EstadoCita = 'pendiente' | 'confirmada' | 'atendida' | 'cancelada' | 'no_asistio';
@@ -387,6 +451,8 @@ export interface Cita {
   estado: EstadoCita;
   notas: string;
   datos: Record<string, unknown>;
+  recordatorios?: string[] | { dia: string | null; hora: string | null };
+  aviso?: { enviado: boolean; error?: string };
 }
 
 export interface NuevaCita {
@@ -409,4 +475,153 @@ export interface Resumen {
   ultimosPedidos: Pedido[];
   citasHoy: number;
   proximasCitas: Cita[];
+  satisfaccion: ResumenEncuestas | null;
+  carritosRecuperados: number;
+  plan: { nombre: string; vigente: boolean; diasRestantes: number | null; clave: ClavePlan; uso: UsoPlan; limites: LimitesPlan } | null;
+}
+
+// ───────────── Crecimiento ─────────────
+
+export interface ResumenEncuestas {
+  promedio: number | null;
+  total: number;
+  buenas: number;
+  distribucion: number[];
+}
+
+export interface Encuesta {
+  id: string;
+  canal: Canal;
+  contacto: string;
+  nombre: string;
+  calificacion: number;
+  comentario: string;
+  origen: 'flujo' | 'pedido';
+  folio: string;
+  createdAt: string;
+}
+
+export type TipoSegmento = 'todos' | 'compraron' | 'sin_terminar' | 'con_cita' | 'inactivos';
+export type EstadoCampana = 'borrador' | 'programada' | 'enviando' | 'enviada' | 'cancelada';
+
+export interface Campana {
+  id: string;
+  botId: string;
+  nombre: string;
+  texto: string;
+  imagenUrl: string;
+  segmento: { tipo: TipoSegmento; dias: number };
+  estado: EstadoCampana;
+  programadaPara: string | null;
+  totales: { destinatarios: number; enviados: number; fallidos: number };
+  creadaPor: string;
+  terminadaEn: string | null;
+  createdAt: string;
+}
+
+export interface DatosCampana {
+  botId: string;
+  nombre: string;
+  texto: string;
+  imagenUrl: string;
+  segmento: { tipo: TipoSegmento; dias: number };
+}
+
+export interface ConteoSegmento {
+  destinatarios: number;
+  contactos: number;
+  conPermiso: number;
+  restanteDelMes: number;
+  segmentos: Record<TipoSegmento, string>;
+  canales: string[];
+}
+
+export interface Contacto {
+  id: string;
+  canal: Canal;
+  contacto: string;
+  nombre: string;
+  aceptaPromos: boolean;
+  ultimoMensaje: string;
+  ultimaCompra: string | null;
+  compras: number;
+}
+
+export interface Actividad {
+  id: string;
+  usuario: string;
+  accion: string;
+  entidad: string;
+  entidadId: string;
+  detalle: string;
+  fecha: string;
+}
+
+export type ClavePlan = 'prueba' | 'basico' | 'pro';
+
+export interface UsoPlan {
+  conversaciones: number;
+  ia: number;
+  campanas: number;
+  bots: number;
+}
+
+export interface LimitesPlan {
+  conversaciones: number;
+  ia: number;
+  campanas: number;
+  bots: number;
+}
+
+export interface PlanDisponible {
+  clave: ClavePlan;
+  nombre: string;
+  precio: number;
+  bots: number;
+  conversaciones: number;
+  ia: number;
+  campanas: number;
+  canales: string[];
+  diasPrueba?: number;
+}
+
+export interface EstadoPlan {
+  clave: ClavePlan;
+  nombre: string;
+  precio: number;
+  vence: string | null;
+  diasRestantes: number | null;
+  vigente: boolean;
+  activa: boolean;
+  uso: UsoPlan;
+  limites: LimitesPlan;
+  canales: string[];
+  planes: PlanDisponible[];
+  pagoEnLinea: boolean;
+}
+
+export type ProveedorPago = 'ninguno' | 'mercadopago' | 'stripe';
+
+export interface EstadoCobros {
+  proveedor: ProveedorPago;
+  configurado: boolean;
+  urlAviso: string;
+  pideSecretoWebhook: boolean;
+  secretoWebhook: boolean;
+}
+
+export interface EmpresaAdmin {
+  id: string;
+  nombre: string;
+  giro: Giro;
+  activa: boolean;
+  suspendidaMotivo: string;
+  plan: ClavePlan;
+  planNombre: string;
+  vence: string | null;
+  vigente: boolean;
+  bots: number;
+  uso: { conversaciones: number; ia: number; campanas: number };
+  limites: { conversaciones: number; ia: number; campanas: number };
+  creada: string;
 }

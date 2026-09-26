@@ -1,0 +1,81 @@
+<div class="pagina">
+  <div class="encabezado-pagina">
+    <div>
+      <h1>Mi plan</h1>
+      <p>Lo que llevas usado este mes y lo que incluye tu plan. Los contadores vuelven a cero cada mes.</p>
+    </div>
+  </div>
+
+  @if (plan(); as p) {
+    <div class="tarjeta actual" [class.vencido]="!p.vigente">
+      <div>
+        <span class="etiqueta">Plan actual</span>
+        <h2>{{ p.nombre }}</h2>
+        @if (!p.vigente) {
+          <p class="alerta"><app-icono nombre="alerta" [tam]="16" /> Tu plan venció: los bots dejaron de abrir conversaciones nuevas. Elige un plan para reactivarlos.</p>
+        } @else if (p.vence) {
+          <p class="suave">
+            {{ p.clave === 'prueba' ? 'La prueba termina' : 'Pagado hasta' }} el {{ p.vence | date: "d 'de' MMMM" }}
+            @if (p.diasRestantes !== null) {
+              ({{ p.diasRestantes }} día{{ p.diasRestantes === 1 ? '' : 's' }})
+            }
+          </p>
+        }
+      </div>
+      <div class="incluye">
+        @for (c of p.canales; track c) {
+          <span class="insignia insignia-verde">{{ canales[c] ?? c }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="medidores">
+      @for (m of medidores; track m.clave) {
+        <div class="tarjeta medidor">
+          <span class="suave">{{ m.texto }}</span>
+          <strong>{{ p.uso[m.clave] | number }} <small class="suave">de {{ p.limites[m.clave] | number }}</small></strong>
+          <div class="pista">
+            <span [style.width.%]="porcentaje(p.uso[m.clave], p.limites[m.clave])" [class.lleno]="porcentaje(p.uso[m.clave], p.limites[m.clave]) >= 90"></span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <h2 class="titulo-planes">Planes</h2>
+    <div class="planes">
+      @for (x of p.planes; track x.clave) {
+        <div class="tarjeta opcion" [class.elegido]="x.clave === p.clave">
+          <h3>{{ x.nombre }}</h3>
+          <p class="precio">
+            @if (x.precio) {
+              {{ '$' + (x.precio | number) }} <small>MXN / mes</small>
+            } @else {
+              Gratis <small>{{ x.diasPrueba }} días</small>
+            }
+          </p>
+          <ul>
+            <li>{{ x.bots }} bot{{ x.bots === 1 ? '' : 's' }}</li>
+            <li>{{ x.conversaciones | number }} conversaciones al mes</li>
+            <li>{{ x.ia | number }} respuestas con IA</li>
+            <li>{{ x.campanas | number }} mensajes de campaña</li>
+            <li>{{ x.canales.length }} canales: {{ nombresCanales(x.canales) }}</li>
+          </ul>
+          @if (x.precio && sesion.esAdmin()) {
+            @if (p.pagoEnLinea) {
+              <button type="button" class="btn" [class.btn-primario]="x.clave !== p.clave" [disabled]="pagando() !== null" (click)="pagar(x.clave)">
+                <app-icono nombre="tarjeta" [tam]="15" />
+                {{ pagando() === x.clave ? 'Abriendo Mercado Pago…' : x.clave === p.clave ? 'Pagar otro mes' : 'Elegir este plan' }}
+              </button>
+            } @else {
+              <p class="suave nota">Escríbenos para activar este plan.</p>
+            }
+          } @else if (x.clave === p.clave) {
+            <span class="insignia insignia-verde">Tu plan</span>
+          }
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="suave">Cargando…</p>
+  }
+</div>

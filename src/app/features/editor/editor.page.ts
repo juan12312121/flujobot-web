@@ -9,6 +9,8 @@ import { WhatsappModalComponent } from './whatsapp/whatsapp-modal.component';
 import { PublicarModalComponent } from './publicar/publicar-modal.component';
 import { AsistenteModalComponent } from '../asistente/asistente-modal.component';
 import { ChatWebModalComponent } from './chat-web/chat-web-modal.component';
+import { CanalesModalComponent, CambiosCanales } from './canales/canales-modal.component';
+import { VersionesModalComponent } from './versiones/versiones-modal.component';
 import { BotsService } from '../../core/services/bots/bots.service';
 import { AvisosService } from '../../core/services/avisos/avisos.service';
 import { ConCambiosPendientes } from '../../core/guards/cambios-sin-guardar.guard';
@@ -19,7 +21,7 @@ type Pestana = 'bloque' | 'probar' | 'revision';
 
 @Component({
   selector: 'app-editor',
-  imports: [IconoComponent, RouterLink, LienzoComponent, PaletaComponent, InspectorComponent, SimuladorComponent, WhatsappModalComponent, PublicarModalComponent, AsistenteModalComponent, ChatWebModalComponent],
+  imports: [IconoComponent, RouterLink, LienzoComponent, PaletaComponent, InspectorComponent, SimuladorComponent, WhatsappModalComponent, PublicarModalComponent, AsistenteModalComponent, ChatWebModalComponent, CanalesModalComponent, VersionesModalComponent],
   providers: [EditorStore],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown)': 'atajos($event)', '(window:beforeunload)': 'antesDeSalir($event)' },
@@ -40,6 +42,8 @@ export class EditorPage implements OnInit, ConCambiosPendientes {
   protected readonly verWhatsapp = signal(false);
   protected readonly verAsistente = signal(false);
   protected readonly verChatWeb = signal(false);
+  protected readonly verCanales = signal(false);
+  protected readonly verVersiones = signal(false);
   /** Lienzo casi vacío (solo Inicio): se invita a describir el bot con el asistente. */
   protected readonly lienzoVacio = computed(() => !this.cargando() && this.store.nodos().length <= 1);
   protected readonly publicado = signal<ResultadoPublicar | null>(null);
@@ -105,6 +109,23 @@ export class EditorPage implements OnInit, ConCambiosPendientes {
       const a = Object.assign(document.createElement('a'), { href: url, download: `flujobot-${bot.instancia}.json` });
       a.click();
       URL.revokeObjectURL(url);
+    } catch (e) {
+      this.avisos.error(e);
+    }
+  }
+
+  protected alCerrarCanales(cambios: CambiosCanales): void {
+    this.verCanales.set(false);
+    this.store.bot.update((b) => (b ? { ...b, ...cambios } : b));
+  }
+
+  /** El borrador ya es la versión restaurada en el servidor: se vuelve a cargar el lienzo. */
+  protected async alRestaurar(version: number): Promise<void> {
+    this.verVersiones.set(false);
+    try {
+      await this.store.cargar(this.botId());
+      this.avisos.exito(`El borrador volvió a la versión ${version}. Pruébalo y publica cuando quieras.`);
+      setTimeout(() => this.lienzo()?.ajustar(), 50);
     } catch (e) {
       this.avisos.error(e);
     }

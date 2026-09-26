@@ -1,0 +1,77 @@
+.ancha {
+  max-width: 1200px;
+}
+
+h1 {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.buscar {
+  min-width: 220px;
+}
+
+.cifras {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.cifras .tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+}
+
+.cifras strong {
+  font-size: 24px;
+}
+
+td small {
+  display: block;
+}
+
+td .insignia {
+  display: inline-block;
+  margin-top: 4px;
+}
+
+tr.suspendida td {
+  background: var(--peligro-claro);
+}
+
+.vencido {
+  color: var(--peligro);
+  font-weight: 600;
+}
+
+.sumar {
+  display: block;
+}
+
+.uso {
+  min-width: 160px;
+}
+
+.pista {
+  display: block;
+  height: 6px;
+  margin: 4px 0;
+  border-radius: 999px;
+  background: var(--fondo);
+  overflow: hidden;
+}
+
+.pista span {
+  display: block;
+  height: 100%;
+  background: var(--primario);
+}
+
+select {
+  min-height: 30px;
+  padding: 3px 6px;
+}

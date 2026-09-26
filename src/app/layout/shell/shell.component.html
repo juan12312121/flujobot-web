@@ -30,5 +30,11 @@
 
 <main>
   <button type="button" class="btn btn-icono hamburguesa" aria-label="Menú" (click)="menuAbierto.set(true)"><app-icono nombre="menu" /></button>
+  @if (avisoPlan(); as a) {
+    <a routerLink="/plan" class="aviso-plan" [class.urgente]="a.urgente">
+      <app-icono nombre="alerta" [tam]="16" />
+      {{ a.texto }} <b>Ver planes</b>
+    </a>
+  }
   <router-outlet />
 </main>

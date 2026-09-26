@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { sesionGuard } from './core/guards/sesion.guard';
 import { invitadoGuard } from './core/guards/invitado.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { superadminGuard } from './core/guards/superadmin.guard';
 import { idValidoGuard } from './core/guards/id-valido.guard';
 import { cambiosSinGuardarGuard } from './core/guards/cambios-sin-guardar.guard';
 
@@ -32,6 +33,11 @@ export const routes: Routes = [
       { path: 'pedidos', title: 'Pedidos · FlujoBot', loadComponent: () => import('./features/pedidos/pedidos.page').then((m) => m.PedidosPage) },
       { path: 'empresa', title: 'Mi empresa · FlujoBot', canActivate: [adminGuard], loadComponent: () => import('./features/empresa/empresa.page').then((m) => m.EmpresaPage) },
       { path: 'equipo', title: 'Equipo · FlujoBot', canActivate: [adminGuard], loadComponent: () => import('./features/equipo/equipo.page').then((m) => m.EquipoPage) },
+      { path: 'campanas', title: 'Campañas · FlujoBot', loadComponent: () => import('./features/campanas/campanas.page').then((m) => m.CampanasPage) },
+      { path: 'encuestas', title: 'Encuestas · FlujoBot', loadComponent: () => import('./features/encuestas/encuestas.page').then((m) => m.EncuestasPage) },
+      { path: 'actividad', title: 'Actividad · FlujoBot', canActivate: [adminGuard], loadComponent: () => import('./features/actividad/actividad.page').then((m) => m.ActividadPage) },
+      { path: 'plan', title: 'Mi plan · FlujoBot', loadComponent: () => import('./features/plan/plan.page').then((m) => m.PlanPage) },
+      { path: 'admin', title: 'Administración · FlujoBot', canActivate: [superadminGuard], loadComponent: () => import('./features/admin/admin.page').then((m) => m.AdminPage) },
     ],
   },
   { path: '**', redirectTo: 'inicio' },

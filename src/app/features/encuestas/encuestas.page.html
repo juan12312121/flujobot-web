@@ -1,0 +1,62 @@
+<div class="pagina">
+  <div class="encabezado-pagina">
+    <div>
+      <h1>Encuestas</h1>
+      <p>Cómo califican tus clientes la atención. Agrega el bloque <b>Encuesta</b> al final de tu bot, o prende la encuesta al entregar en Mi empresa → Avisos.</p>
+    </div>
+    <select [value]="'' + dias()" (change)="cambiarDias($event)" aria-label="Periodo">
+      <option value="7">Últimos 7 días</option>
+      <option value="30">Últimos 30 días</option>
+      <option value="90">Últimos 90 días</option>
+      <option value="365">Último año</option>
+    </select>
+  </div>
+
+  @if (resumen(); as r) {
+    <div class="resumen">
+      <div class="tarjeta promedio">
+        <span class="numero">{{ r.promedio === null ? '—' : (r.promedio | number: '1.1-1') }}</span>
+        <div class="estrellas" [attr.aria-label]="'Promedio ' + r.promedio + ' de 5'">
+          @for (e of estrellas; track e) {
+            <app-icono nombre="estrella" [tam]="18" [class.llena]="(r.promedio ?? 0) >= e - 0.25" />
+          }
+        </div>
+        <small class="suave">{{ r.total }} calificaciones</small>
+      </div>
+      <div class="tarjeta satisfechos">
+        <span class="numero">{{ r.total ? (r.buenas / r.total) * 100 : 0 | number: '1.0-0' }}%</span>
+        <small class="suave">calificaron con 4 o 5</small>
+      </div>
+      <div class="tarjeta distribucion">
+        @for (e of [5, 4, 3, 2, 1]; track e) {
+          <div class="barra">
+            <span class="etq">{{ e }}</span>
+            <span class="pista"><span [style.width.%]="(r.distribucion[e - 1] / maximo()) * 100" [class.mala]="e <= 3"></span></span>
+            <span class="cuantos">{{ r.distribucion[e - 1] }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="tarjeta">
+    @if (lista().length === 0) {
+      <div class="vacio"><h2>Sin calificaciones en este periodo</h2></div>
+    } @else {
+      <table class="tabla">
+        <thead><tr><th>Fecha</th><th>Cliente</th><th>Calificación</th><th>Comentario</th><th>De</th></tr></thead>
+        <tbody>
+          @for (e of lista(); track e.id) {
+            <tr>
+              <td class="suave">{{ e.createdAt | date: 'd MMM, HH:mm' }}</td>
+              <td>{{ e.nombre || (e.canal === 'whatsapp' ? '+' + e.contacto : canales[e.canal].nombre) }}</td>
+              <td><span class="calif" [class.mala]="e.calificacion <= 3">{{ e.calificacion }} / 5</span></td>
+              <td>{{ e.comentario || '—' }}</td>
+              <td class="suave">{{ e.origen === 'pedido' ? 'Pedido ' + e.folio : 'Bot' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

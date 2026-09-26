@@ -148,6 +148,50 @@ export const TIPOS: Record<TipoNodo, DefinicionTipo> = {
     espera: false,
     datosIniciales: () => ({ url: 'https://' }),
   },
+  estado: {
+    tipo: 'estado',
+    nombre: 'Consultar pedido',
+    descripcion: '"¿Cómo va mi pedido?": muestra sus pedidos y citas',
+    icono: 'lupa',
+    color: '#0e7490',
+    grupo: 'Negocio',
+    salidas: ['encontrado', 'nada'],
+    espera: false,
+    datosIniciales: () => ({ texto: 'Esto es lo que encontré:', que: 'ambos' }),
+  },
+  esperar: {
+    tipo: 'esperar',
+    nombre: 'Esperar respuesta',
+    descripcion: 'Si no contesta en cierto tiempo, sigue por otro camino',
+    icono: 'reloj',
+    color: '#4f46e5',
+    grupo: 'Lógica',
+    salidas: ['respondio', 'sin_respuesta'],
+    espera: true,
+    datosIniciales: () => ({ texto: '¿Te ayudo con algo más?', minutos: 120 }),
+  },
+  encuesta: {
+    tipo: 'encuesta',
+    nombre: 'Encuesta',
+    descripcion: 'Pide calificar la atención del 1 al 5',
+    icono: 'estrella',
+    color: '#ca8a04',
+    grupo: 'Conversación',
+    salidas: ['buena', 'mala'],
+    espera: true,
+    datosIniciales: () => ({ texto: '¿Cómo calificarías la atención? Responde del *1* (malo) al *5* (excelente).', pedirComentario: false }),
+  },
+  permiso: {
+    tipo: 'permiso',
+    nombre: 'Pedir permiso',
+    descripcion: 'Pregunta si acepta promociones (para las campañas)',
+    icono: 'megafono',
+    color: '#be185d',
+    grupo: 'Conversación',
+    salidas: ['acepto', 'no_acepto'],
+    espera: true,
+    datosIniciales: () => ({ texto: '¿Te gustaría recibir nuestras promociones y novedades por aquí?' }),
+  },
   humano: {
     tipo: 'humano',
     nombre: 'Asesor',
@@ -192,12 +236,27 @@ const ETIQUETAS: Record<string, string> = {
   no: 'No',
   ok: 'Éxito',
   error: 'Falló',
+  encontrado: 'Encontró',
+  nada: 'No tiene',
+  sin_respuesta: 'No respondió',
+  buena: 'Buena (4-5)',
+  mala: 'Mala (1-3)',
+  acepto: 'Aceptó',
+  no_acepto: 'No aceptó',
 };
 
 /** Salidas de un bloque concreto (las del menú dependen de sus opciones). */
 export function puertosDe(nodo: Pick<NodoFlujo, 'tipo' | 'datos'>): Puerto[] {
   if (nodo.tipo === 'menu') return (nodo.datos.opciones ?? []).map((o, i) => ({ id: `opcion:${o.id}`, etiqueta: `${i + 1}. ${o.etiqueta}` }));
   return TIPOS[nodo.tipo].salidas.map((s) => ({ id: s, etiqueta: ETIQUETAS[s] ?? s }));
+}
+
+/** 90 → "1 h 30 min"; 2880 → "2 días". */
+export function duracion(minutos: number): string {
+  if (minutos % 1440 === 0) return `${minutos / 1440} día${minutos === 1440 ? '' : 's'}`;
+  const h = Math.floor(minutos / 60);
+  const m = minutos % 60;
+  return [h ? `${h} h` : '', m ? `${m} min` : ''].filter(Boolean).join(' ');
 }
 
 /** Texto corto que se ve dentro del bloque en el lienzo. */
@@ -215,7 +274,13 @@ export function resumenNodo(nodo: NodoFlujo): string {
     case 'ia':
       return 'Pregunta libre → responde con la información de "Mi empresa"';
     case 'pedido':
-      return d.sinProductos ? 'Solicitud (sin productos)' : 'Con lo que hay en el carrito';
+      return `${d.sinProductos ? 'Solicitud (sin productos)' : 'Con lo que hay en el carrito'}${d.cobrar ? ' · con link de pago' : ''}`;
+    case 'estado':
+      return d.que === 'pedidos' ? 'Sus últimos pedidos' : d.que === 'citas' ? 'Sus próximas citas' : 'Sus pedidos y citas';
+    case 'esperar':
+      return `Espera ${duracion(d.minutos ?? 60)} a que conteste`;
+    case 'encuesta':
+      return `Calificación 1 a 5${d.pedirComentario ? ' + comentario' : ''}`;
     case 'condicion':
       return `${d.variable ?? '?'} ${d.operador ?? ''} ${d.operador === 'existe' ? '' : (d.valor ?? '')}`;
     case 'webhook':

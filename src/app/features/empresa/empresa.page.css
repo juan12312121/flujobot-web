@@ -202,3 +202,17 @@ code {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.interruptores {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.textos-aviso summary {
+  margin-bottom: 10px;
+  color: var(--primario-osc);
+  font-weight: 600;
+  cursor: pointer;
+}

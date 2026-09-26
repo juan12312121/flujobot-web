@@ -75,3 +75,10 @@ section header {
   color: var(--suave);
   text-decoration: line-through;
 }
+
+.de {
+  margin-left: 3px;
+  color: var(--suave);
+  font-size: 14px;
+  font-weight: 500;
+}

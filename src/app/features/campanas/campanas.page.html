@@ -1,0 +1,131 @@
+<div class="pagina ancha">
+  <div class="encabezado-pagina">
+    <div>
+      <h1>Campañas</h1>
+      <p>Manda promociones o avisos a muchos clientes a la vez. Solo le llegan a quien aceptó recibirlas; cualquiera puede escribir BAJA para salirse.</p>
+    </div>
+    @if (conteo(); as c) {
+      <div class="contadores">
+        <span><b>{{ c.contactos }}</b> contactos</span>
+        <span><b>{{ c.conPermiso }}</b> aceptaron promociones</span>
+        <span><b>{{ c.restanteDelMes }}</b> mensajes disponibles este mes</span>
+      </div>
+    }
+  </div>
+
+  <div class="columnas">
+    <section class="lista">
+      @for (c of lista(); track c.id) {
+        <article class="tarjeta campana" [class.editando]="editando() === c.id">
+          <header>
+            <div>
+              <strong>{{ c.nombre }}</strong>
+              <small class="suave">Creada {{ c.createdAt | date: 'd MMM' }}{{ c.creadaPor ? ' por ' + c.creadaPor : '' }}</small>
+            </div>
+            <span
+              class="insignia"
+              [class.insignia-verde]="c.estado === 'enviada'"
+              [class.insignia-azul]="c.estado === 'enviando' || c.estado === 'programada'"
+              [class.insignia-roja]="c.estado === 'cancelada'"
+              >{{ estados[c.estado] }}</span
+            >
+          </header>
+          <p class="texto">{{ c.texto }}</p>
+          @if (c.estado === 'programada' && c.programadaPara) {
+            <p class="suave"><app-icono nombre="reloj" [tam]="13" /> Sale el {{ c.programadaPara | date: "d 'de' MMMM, HH:mm" }}</p>
+          }
+          @if (c.estado === 'enviando' || c.estado === 'enviada') {
+            <div class="avance"><span [style.width.%]="avance(c)"></span></div>
+            <p class="suave">
+              {{ c.totales.enviados }} enviados de {{ c.totales.destinatarios }}
+              @if (c.totales.fallidos) {
+                · <span class="error">{{ c.totales.fallidos }} no se pudieron entregar</span>
+              }
+            </p>
+          }
+          <footer>
+            @if (c.estado === 'borrador') {
+              <button type="button" class="btn btn-chico" (click)="editar(c)">Editar</button>
+              <button type="button" class="btn btn-chico btn-primario" [disabled]="programando() === c.id" (click)="programar(c, '')">
+                <app-icono nombre="enviar" [tam]="14" /> Enviar ahora
+              </button>
+              <span class="programar">
+                <input #cuando type="datetime-local" aria-label="Fecha y hora" />
+                <button type="button" class="btn btn-chico" [disabled]="programando() === c.id" (click)="cuando.value && programar(c, cuando.value)">Programar</button>
+              </span>
+            }
+            @if (c.estado === 'programada' || c.estado === 'enviando') {
+              <button type="button" class="btn btn-chico" (click)="cancelar(c)">{{ c.estado === 'programada' ? 'Cancelar programación' : 'Detener envío' }}</button>
+            }
+            @if (c.estado !== 'enviando') {
+              <button type="button" class="btn btn-chico btn-fantasma btn-peligro" (click)="borrar(c)">Borrar</button>
+            }
+          </footer>
+        </article>
+      } @empty {
+        <div class="tarjeta vacio">
+          <app-icono nombre="megafono" [tam]="28" />
+          <h2>Aún no hay campañas</h2>
+          <p>Primero agrega el bloque <b>Pedir permiso</b> en tu bot para que tus clientes acepten recibir promociones.</p>
+        </div>
+      }
+    </section>
+
+    <form class="tarjeta formulario" (submit)="$event.preventDefault(); guardar()">
+      <header>
+        <h2>{{ editando() ? 'Editar campaña' : 'Nueva campaña' }}</h2>
+        @if (editando()) {
+          <button type="button" class="btn btn-chico btn-fantasma" (click)="nueva()">+ Nueva</button>
+        }
+      </header>
+      <label class="campo">
+        <span>Nombre (solo lo ves tú)</span>
+        <input [value]="form().nombre" maxlength="80" placeholder="Martes de 2x1" (input)="cambiar('nombre', $any($event.target).value)" />
+      </label>
+      <label class="campo">
+        <span>Sale por el bot</span>
+        <select [value]="form().botId" (change)="cambiar('botId', $any($event.target).value)">
+          @for (b of bots(); track b.id) {
+            <option [value]="b.id">{{ b.nombre }}{{ b.whatsapp === 'conectado' ? ' (WhatsApp conectado)' : '' }}</option>
+          }
+        </select>
+        <small>Usa el WhatsApp y el Telegram de ese bot.</small>
+      </label>
+      <label class="campo">
+        <span>Mensaje</span>
+        <textarea rows="5" maxlength="1500" [value]="form().texto" (input)="cambiar('texto', $any($event.target).value)"></textarea>
+        <small>Usa {{ '{{nombre}}' }} para saludar por su nombre. Se agrega solo: "Responde BAJA si ya no quieres recibir estos mensajes".</small>
+      </label>
+      <div class="campo">
+        <span>Imagen (opcional)</span>
+        <app-subir-imagen uso="mensajes" [url]="form().imagenUrl" (cambio)="cambiar('imagenUrl', $event)" />
+      </div>
+      <label class="campo">
+        <span>¿A quién?</span>
+        <select [value]="form().segmento.tipo" (change)="cambiarSegmento({ tipo: $any($event.target).value })">
+          @for (s of segmentos; track s.tipo) {
+            <option [value]="s.tipo">{{ s.texto }}</option>
+          }
+        </select>
+      </label>
+      @if (conDias()) {
+        <label class="campo corto">
+          <span>Días</span>
+          <input type="number" min="1" max="365" [value]="form().segmento.dias" (change)="cambiarSegmento({ dias: +$any($event.target).value || 30 })" />
+        </label>
+      }
+      @if (conteo(); as c) {
+        <p class="estimado" [class.cero]="c.destinatarios === 0">
+          <app-icono nombre="equipo" [tam]="16" />
+          @if (c.destinatarios) {
+            Le llegaría a <b>{{ c.destinatarios }}</b> persona(s) por WhatsApp o Telegram.
+          } @else {
+            Nadie de ese grupo ha aceptado promociones todavía.
+          }
+        </p>
+      }
+      <button type="submit" class="btn btn-primario" [disabled]="guardando()">{{ guardando() ? 'Guardando…' : 'Guardar campaña' }}</button>
+      <p class="ayuda">Los mensajes salen poco a poco (unos 25 por minuto) para que WhatsApp no bloquee tu número.</p>
+    </form>
+  </div>
+</div>

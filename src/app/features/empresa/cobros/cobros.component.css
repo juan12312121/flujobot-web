@@ -1,0 +1,49 @@
+.proveedores {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.proveedores button {
+  padding: 8px 14px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: var(--superficie);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.proveedores button.elegido {
+  border-color: var(--primario);
+  background: var(--primario-claro);
+  color: var(--primario-osc);
+}
+
+.listo {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--primario-osc);
+}
+
+.bloque {
+  margin-top: 8px;
+}
+
+.url {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.url code {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: #f2f4f7;
+  font-size: 12px;
+  word-break: break-all;
+}

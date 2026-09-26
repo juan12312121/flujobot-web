@@ -1,0 +1,141 @@
+.ancha {
+  max-width: 1200px;
+}
+
+.contadores {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: var(--suave);
+  font-size: 13px;
+}
+
+.contadores b {
+  color: var(--texto);
+}
+
+.columnas {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 18px;
+  align-items: start;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.campana {
+  padding: 14px 16px;
+}
+
+.campana.editando {
+  border-color: var(--primario);
+}
+
+.campana header,
+.formulario header {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.campana header div {
+  display: flex;
+  flex-direction: column;
+}
+
+.texto {
+  margin: 10px 0;
+  white-space: pre-wrap;
+  line-height: 1.45;
+}
+
+.avance {
+  height: 6px;
+  margin: 8px 0 4px;
+  border-radius: 999px;
+  background: var(--fondo);
+  overflow: hidden;
+}
+
+.avance span {
+  display: block;
+  height: 100%;
+  background: var(--primario);
+  transition: width 0.4s;
+}
+
+.error {
+  color: var(--peligro);
+}
+
+.campana footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.programar {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.programar input {
+  min-height: 30px;
+  padding: 3px 6px;
+  font-size: 12.5px;
+}
+
+.formulario {
+  position: sticky;
+  top: 16px;
+  padding: 18px;
+}
+
+.formulario h2 {
+  margin-bottom: 12px;
+}
+
+.corto input {
+  max-width: 110px;
+}
+
+.estimado {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 4px 0 12px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--primario-claro);
+  color: var(--primario-osc);
+  font-size: 13px;
+}
+
+.estimado.cero {
+  background: var(--aviso-claro);
+  color: var(--aviso);
+}
+
+.vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--suave);
+}
+
+@media (max-width: 960px) {
+  .columnas {
+    grid-template-columns: 1fr;
+  }
+  .formulario {
+    position: static;
+  }
+}

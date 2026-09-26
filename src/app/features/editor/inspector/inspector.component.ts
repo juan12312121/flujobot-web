@@ -7,7 +7,23 @@ import { DatosNodo, OpcionMenu } from '../../../core/models';
 import { IconoComponent } from '../../../shared/components/icono/icono.component';
 import { SubirImagenComponent } from '../../../shared/components/subir-imagen/subir-imagen.component';
 
-const VARIABLES_BASE = ['nombre', 'telefono', 'empresa', 'opcion', 'producto.nombre', 'producto.precio', 'cantidad', 'total', 'folio', 'cita.fecha', 'cita.hora', 'cita.folio'];
+const VARIABLES_BASE = [
+  'nombre',
+  'telefono',
+  'empresa',
+  'opcion',
+  'producto.nombre',
+  'producto.precio',
+  'cantidad',
+  'total',
+  'folio',
+  'linkPago',
+  'cita.fecha',
+  'cita.hora',
+  'cita.folio',
+  'respuesta',
+  'calificacion',
+];
 
 /** Formulario del bloque seleccionado. Cada cambio va directo al store (y de ahí al autoguardado). */
 @Component({
@@ -57,6 +73,22 @@ export class InspectorComponent {
 
   protected casilla(campo: keyof DatosNodo, evento: Event): void {
     this.cambiar(campo, (evento.target as HTMLInputElement).checked);
+  }
+
+  // ───── Esperar: se guarda en minutos, se edita en minutos / horas / días ─────
+
+  protected esperaUnidad(): string {
+    const m = this.nodo()?.datos.minutos ?? 60;
+    return m % 1440 === 0 ? '1440' : m % 60 === 0 ? '60' : '1';
+  }
+
+  protected esperaValor(): number {
+    return (this.nodo()?.datos.minutos ?? 60) / Number(this.esperaUnidad());
+  }
+
+  protected cambiarEspera(valor: number | string, unidad: string): void {
+    const minutos = Math.round(Number(valor) * Number(unidad));
+    if (Number.isFinite(minutos) && minutos >= 1) this.cambiar('minutos', Math.min(minutos, 7 * 1440));
   }
 
   // ───── Opciones del menú ─────

@@ -1,0 +1,113 @@
+<app-modal titulo="Canales y seguimiento" [ancho]="620" (cerrar)="salir()">
+  <nav class="pestanas" role="tablist">
+    <button type="button" role="tab" [class.activa]="pestana() === 'telegram'" (click)="pestana.set('telegram')">
+      <app-icono nombre="enviar" [tam]="15" /> Telegram
+      @if (telegram().activo) {
+        <span class="punto"></span>
+      }
+    </button>
+    <button type="button" role="tab" [class.activa]="pestana() === 'meta'" (click)="pestana.set('meta')">
+      <app-icono nombre="chat" [tam]="15" /> Messenger e Instagram
+      @if (meta().activo) {
+        <span class="punto"></span>
+      }
+    </button>
+    <button type="button" role="tab" [class.activa]="pestana() === 'carrito'" (click)="pestana.set('carrito')">
+      <app-icono nombre="carrito" [tam]="15" /> Carrito abandonado
+      @if (recuperacion().activo) {
+        <span class="punto"></span>
+      }
+    </button>
+  </nav>
+
+  @if (!bot().publicado) {
+    <p class="aviso"><app-icono nombre="alerta" [tam]="16" /> Publica el bot primero: todos los canales usan la versión publicada.</p>
+  }
+
+  @switch (pestana()) {
+    @case ('telegram') {
+      @if (telegram().activo) {
+        <div class="conectado">
+          <app-icono nombre="check" [tam]="18" />
+          <div>
+            <strong>Conectado como &#64;{{ telegram().usuario }}</strong>
+            <small>Tus clientes te encuentran en <a [href]="'https://t.me/' + telegram().usuario" target="_blank" rel="noopener">t.me/{{ telegram().usuario }}</a></small>
+          </div>
+          <button type="button" class="btn btn-chico btn-peligro" [disabled]="ocupado()" (click)="quitarTelegram()">Desconectar</button>
+        </div>
+      } @else {
+        <ol class="pasos">
+          <li>En Telegram abre <b>&#64;BotFather</b> y escribe <code>/newbot</code>.</li>
+          <li>Ponle nombre y un usuario que termine en "bot" (ej. <i>taqueria_pepe_bot</i>).</li>
+          <li>Te da un <b>token</b> (algo como <code>123456:ABC-xyz…</code>): pégalo aquí.</li>
+        </ol>
+        <div class="linea">
+          <input #tokenTg type="password" placeholder="Token de @BotFather" autocomplete="off" />
+          <button type="button" class="btn btn-primario" [disabled]="ocupado()" (click)="conectarTelegram(tokenTg.value)">
+            {{ ocupado() ? 'Conectando…' : 'Conectar' }}
+          </button>
+        </div>
+        <p class="ayuda">Es gratis y no necesita número de teléfono. El token se guarda cifrado.</p>
+      }
+    }
+
+    @case ('meta') {
+      @if (meta().activo) {
+        <div class="conectado">
+          <app-icono nombre="check" [tam]="18" />
+          <div>
+            <strong>Messenger conectado{{ meta().instagram ? ' + Instagram' : '' }}</strong>
+            <small>Página {{ meta().paginaId }}. Meta solo deja contestar dentro de las 24 h después del último mensaje del cliente.</small>
+          </div>
+          <button type="button" class="btn btn-chico btn-peligro" [disabled]="ocupado()" (click)="quitarMeta()">Desconectar</button>
+        </div>
+      } @else {
+        <ol class="pasos">
+          <li>Necesitas una <b>página de Facebook</b> (y, para Instagram, una cuenta profesional ligada a esa página).</li>
+          <li>En <a href="https://business.facebook.com/settings/system-users" target="_blank" rel="noopener">Meta Business</a> genera un <b>token de acceso de la página</b> con permisos de mensajes.</li>
+          <li>Pégalo aquí: FlujoBot suscribe la página y el bot empieza a contestar.</li>
+        </ol>
+        <div class="linea">
+          <input #tokenMeta type="password" placeholder="Token de acceso de la página" autocomplete="off" />
+          <button type="button" class="btn btn-primario" [disabled]="ocupado()" (click)="conectarMeta(tokenMeta.value)">
+            {{ ocupado() ? 'Conectando…' : 'Conectar' }}
+          </button>
+        </div>
+        <p class="ayuda">Requiere que la app de Meta de FlujoBot esté aprobada. Si ves "no está configurada", pídele al administrador que la active.</p>
+      }
+    }
+
+    @case ('carrito') {
+      <label class="check interruptor">
+        <input type="checkbox" [checked]="recuperacion().activo" [disabled]="ocupado()" (change)="guardarRecuperacion({ activo: $any($event.target).checked })" />
+        <span>
+          <b>{{ recuperacion().activo ? 'Recordatorio encendido' : 'Recordatorio apagado' }}</b>
+          <small>Si alguien deja productos en el carrito y no contesta, el bot le escribe una vez y le muestra dónde se quedó.</small>
+        </span>
+      </label>
+      <label class="campo corto">
+        <span>Escribirle después de</span>
+        <div class="linea">
+          <input type="number" min="1" max="48" [value]="recuperacion().horas" (change)="horas($event)" />
+          <span class="suave">horas sin respuesta</span>
+        </div>
+      </label>
+      <label class="campo">
+        <span>Mensaje (opcional)</span>
+        <textarea
+          rows="3"
+          [value]="recuperacion().texto"
+          maxlength="600"
+          placeholder="Hola {{ '{{nombre}}' }}, vimos que dejaste tu pedido a medias ({{ '{{total}}' }}). ¿Lo terminamos?"
+          (change)="guardarRecuperacion({ texto: $any($event.target).value })"
+        ></textarea>
+        <small>Variables: {{ '{{nombre}}' }}, {{ '{{total}}' }}, {{ '{{pedido}}' }}. Vacío = el mensaje de fábrica.</small>
+      </label>
+      <p class="ayuda">Sale por WhatsApp y Telegram (y por Messenger/Instagram si es antes de 24 h). En Inicio verás cuántos pedidos se recuperaron.</p>
+    }
+  }
+
+  <div pie>
+    <button type="button" class="btn btn-primario" (click)="salir()">Listo</button>
+  </div>
+</app-modal>

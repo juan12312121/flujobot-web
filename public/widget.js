@@ -100,6 +100,8 @@
       '*{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}' +
       '.boton{position:fixed;right:20px;bottom:20px;z-index:2147483000;width:60px;height:60px;border:0;border-radius:50%;background:' + color + ';color:' + sobreColor + ';display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 24px rgba(16,24,40,.25);transition:transform .15s}' +
       '.boton:hover{transform:scale(1.06)}' +
+      '.boton.nuevo::after{content:"";position:absolute;top:4px;right:4px;width:14px;height:14px;border:2px solid #fff;border-radius:50%;background:#d92d20}' +
+      '.m .autor{display:block;margin-bottom:2px;color:#667085;font-size:11px;font-weight:600}' +
       '.panel{position:fixed;right:20px;bottom:92px;z-index:2147483000;width:370px;height:560px;max-height:calc(100vh - 112px);display:none;flex-direction:column;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 16px 48px rgba(16,24,40,.28)}' +
       '.panel.abierto{display:flex;animation:entra .2s ease-out}' +
       '.pagina .panel{inset:0;width:auto;height:auto;max-height:none;border-radius:0;display:flex;right:0;bottom:0}' +
@@ -163,7 +165,8 @@
     function pintarMensaje(m) {
       var d = document.createElement('div');
       d.className = 'm' + (m.de === 'yo' ? ' yo' : '');
-      d.innerHTML = (m.url ? '<img alt="" src="' + escapar(m.url) + '">' : '') + formato(m.texto || '');
+      d.innerHTML =
+        (m.autor ? '<span class="autor">' + escapar(m.autor) + '</span>' : '') + (m.url ? '<img alt="" src="' + escapar(m.url) + '">' : '') + formato(m.texto || '');
       lista.appendChild(d);
       lista.scrollTop = lista.scrollHeight;
     }
@@ -212,6 +215,7 @@
             });
           });
           return cadena.then(function () {
+            if (r.fecha) guardar('desde', r.fecha);
             guardar('sugerencias', r.sugerencias);
             pintarSugerencias(r.sugerencias);
           });
@@ -244,9 +248,37 @@
       }, 50);
     }
     $('.boton').onclick = function () {
+      $('.boton').classList.remove('nuevo');
       if (panel.classList.contains('abierto')) panel.classList.remove('abierto');
       else abrir();
     };
+
+    // Lo que escribe un asesor desde el panel (o un aviso del negocio) llega aquí: se pregunta cada
+    // 5 s con el chat abierto y cada 30 s cerrado (solo si el visitante ya platicó).
+    var ultimaRevision = 0;
+    function revisarNuevos() {
+      var desde = leer('desde', null);
+      var abierto = panel.classList.contains('abierto');
+      if (!desde || ocupado || Date.now() - ultimaRevision < (abierto ? 5000 : 30000)) return;
+      ultimaRevision = Date.now();
+      pedir('/mensajes?visitante=' + encodeURIComponent(visitante) + '&desde=' + encodeURIComponent(desde))
+        .then(function (r) {
+          if (!r.mensajes.length) return;
+          guardar('desde', r.fecha);
+          r.mensajes.forEach(function (m) {
+            var nuevo = { de: 'bot', texto: m.texto, url: m.url, autor: m.autor || undefined };
+            // Si el chat nunca se ha abierto en esta página, solo se guarda: al abrir se pinta todo el historial
+            if (lista.childElementCount === 0) {
+              historial.push(nuevo);
+              guardar('historial', historial.slice(-60));
+            } else agregar(nuevo);
+          });
+          if (r.estado === 'humano') pintarSugerencias([]);
+          if (!panel.classList.contains('abierto')) $('.boton').classList.add('nuevo');
+        })
+        .catch(function () {});
+    }
+    setInterval(revisarNuevos, 2500);
     $('.cerrar').onclick = function () {
       panel.classList.remove('abierto');
     };

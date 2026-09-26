@@ -1,0 +1,43 @@
+<div class="pagina">
+  <div class="encabezado-pagina">
+    <div>
+      <h1>Actividad</h1>
+      <p>Quién hizo qué en tu cuenta: publicaciones, cambios de estado, conversaciones atendidas, campañas…</p>
+    </div>
+    <div class="filtros">
+      <select [value]="entidad()" (change)="filtrar('entidad', $any($event.target).value)" aria-label="Sección">
+        <option value="">Todo</option>
+        @for (e of entidades; track e[0]) {
+          <option [value]="e[0]">{{ e[1] }}</option>
+        }
+      </select>
+      <select [value]="usuario()" (change)="filtrar('usuario', $any($event.target).value)" aria-label="Persona">
+        <option value="">Todas las personas</option>
+        @for (u of usuarios(); track u) {
+          <option [value]="u">{{ u }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="tarjeta">
+    @if (lista().length === 0) {
+      <div class="vacio"><h2>Sin actividad todavía</h2></div>
+    } @else {
+      <ul class="linea-tiempo">
+        @for (a of lista(); track a.id) {
+          <li>
+            <time>{{ a.fecha | date: 'd MMM, HH:mm' }}</time>
+            <div>
+              <strong>{{ acciones[a.accion] ?? a.accion }}</strong>
+              @if (a.detalle) {
+                <span class="detalle">{{ a.detalle }}</span>
+              }
+              <small class="suave">{{ a.usuario }}</small>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

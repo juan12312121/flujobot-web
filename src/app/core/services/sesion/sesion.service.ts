@@ -30,6 +30,7 @@ export class SesionService {
   readonly empresa = computed(() => this.sesion()?.empresa ?? null);
   readonly autenticado = computed(() => this.token() !== null);
   readonly esAdmin = computed(() => this.usuario()?.rol === 'admin');
+  readonly esSuperadmin = computed(() => this.usuario()?.esSuperadmin === true);
   /** Palabras del panel según la empresa ("Servicios", "Pacientes"...). */
   readonly terminos = computed<Terminos>(() => ({ ...TERMINOS_BASE, ...(this.empresa()?.terminos ?? {}) }));
   readonly modulos = computed<Modulos>(() => ({ ...MODULOS_BASE, ...(this.empresa()?.modulos ?? {}) }));
@@ -43,6 +44,12 @@ export class SesionService {
   actualizarEmpresa(empresa: Empresa): void {
     const actual = this.sesion();
     if (actual) this.iniciar({ ...actual, empresa });
+  }
+
+  /** El perfil trae datos frescos del usuario (p. ej. si ahora es superadministrador). */
+  actualizarUsuario(usuario: Sesion['usuario']): void {
+    const actual = this.sesion();
+    if (actual) this.iniciar({ ...actual, usuario });
   }
 
   cerrar(): void {

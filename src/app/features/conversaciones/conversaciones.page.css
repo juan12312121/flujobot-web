@@ -53,6 +53,22 @@
   background: #e4e7ec;
   font-weight: 700;
   flex-shrink: 0;
+  position: relative;
+}
+
+/* Canal por el que escribió (esquina del avatar) */
+.avatar .canal {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--primario);
+  color: #fff;
 }
 
 .avatar.humano {
@@ -128,6 +144,46 @@
 .burbuja.bot {
   align-self: flex-end;
   background: #d9fdd3;
+}
+
+.burbuja.asesor {
+  background: #dbeafe;
+}
+
+.burbuja.aviso {
+  background: #fef4e6;
+}
+
+.autor {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--suave);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.sistema {
+  align-self: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--peligro-claro);
+  color: var(--peligro);
+  font-size: 11.5px;
+}
+
+.responder {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  padding: 10px 12px;
+  border-top: 1px solid var(--borde);
+  background: var(--superficie);
+}
+
+.responder textarea {
+  flex: 1;
+  resize: none;
 }
 
 .burbuja img {

@@ -65,3 +65,40 @@ dt {
 dd {
   margin: 0;
 }
+
+.estado[data-estado='preparando'],
+.estado[data-estado='enviado'],
+.estado[data-estado='listo'] {
+  background: var(--aviso-claro);
+  color: var(--aviso);
+}
+
+.filtros {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.aviso-cliente {
+  margin: -6px 0 12px;
+  color: var(--suave);
+  font-size: 13px;
+}
+
+td .insignia {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 11px;
+}
+
+.acciones-pago {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.acciones-pago a {
+  text-decoration: none;
+}

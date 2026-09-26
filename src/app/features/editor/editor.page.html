@@ -38,6 +38,12 @@
     <button type="button" class="btn" title="Pon el chat en tu página web o comparte un enlace" (click)="verChatWeb.set(true)">
       <app-icono nombre="chat" [tam]="15" /> Chat web
     </button>
+    <button type="button" class="btn" title="Telegram, Messenger, Instagram y recordatorio de carrito abandonado" (click)="verCanales.set(true)">
+      <app-icono nombre="enviar" [tam]="15" /> Canales
+    </button>
+    <button type="button" class="btn btn-icono" title="Versiones publicadas: regresa a una anterior" aria-label="Versiones" (click)="verVersiones.set(true)">
+      <app-icono nombre="historial" [tam]="16" />
+    </button>
     <button type="button" class="btn" title="Describe con tus palabras qué cambiar y el asistente lo arma" (click)="verAsistente.set(true)">
       <app-icono nombre="destellos" [tam]="15" /> Asistente
     </button>
@@ -115,6 +121,12 @@
 }
 @if (verChatWeb() && store.bot(); as bot) {
   <app-chat-web-modal [botId]="bot.id" [publicado]="!!bot.publicado" (cerrar)="verChatWeb.set(false)" />
+}
+@if (verCanales() && store.bot(); as bot) {
+  <app-canales-modal [bot]="bot" (cerrar)="alCerrarCanales($event)" />
+}
+@if (verVersiones() && store.bot(); as bot) {
+  <app-versiones-modal [botId]="bot.id" (cerrar)="verVersiones.set(false)" (restaurada)="alRestaurar($event)" />
 }
 @if (verAsistente()) {
   <app-asistente-modal

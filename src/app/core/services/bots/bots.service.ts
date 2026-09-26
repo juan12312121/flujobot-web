@@ -1,6 +1,19 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../api/api.service';
-import { Bot, BotDetalle, ChatWeb, ResultadosBot, Conexion, EstadoWhatsApp, NodoFlujo, Problema, ResultadoPublicar, ResultadoSimulacion } from '../../models';
+import {
+  Bot,
+  BotDetalle,
+  ChatWeb,
+  ResultadosBot,
+  Conexion,
+  EstadoWhatsApp,
+  NodoFlujo,
+  Problema,
+  Recuperacion,
+  ResultadoPublicar,
+  ResultadoSimulacion,
+  VersionBot,
+} from '../../models';
 
 export type Plantilla = 'tienda' | 'citas' | 'informacion' | 'prospectos' | 'vacio';
 
@@ -66,5 +79,34 @@ export class BotsService {
 
   desconectarWhatsApp(id: string): Promise<{ estado: EstadoWhatsApp }> {
     return this.api.post(`/bots/${id}/whatsapp/desconectar`);
+  }
+
+  versiones(id: string): Promise<VersionBot[]> {
+    return this.api.get(`/bots/${id}/versiones`);
+  }
+
+  /** Regresa el borrador a esa publicación (no publica solo). */
+  restaurarVersion(id: string, versionId: string): Promise<{ version: number; restaurada: number }> {
+    return this.api.post(`/bots/${id}/versiones/${versionId}/restaurar`);
+  }
+
+  conectarTelegram(id: string, token: string): Promise<{ activo: boolean; usuario: string; enlace: string }> {
+    return this.api.put(`/bots/${id}/telegram`, { token });
+  }
+
+  desconectarTelegram(id: string): Promise<void> {
+    return this.api.delete(`/bots/${id}/telegram`);
+  }
+
+  conectarMeta(id: string, token: string): Promise<{ activo: boolean; pagina: string; paginaId: string; instagram: boolean }> {
+    return this.api.put(`/bots/${id}/meta`, { token });
+  }
+
+  desconectarMeta(id: string): Promise<void> {
+    return this.api.delete(`/bots/${id}/meta`);
+  }
+
+  configurarRecuperacion(id: string, cambios: Partial<Recuperacion>): Promise<Recuperacion> {
+    return this.api.put(`/bots/${id}/recuperacion`, cambios);
   }
 }

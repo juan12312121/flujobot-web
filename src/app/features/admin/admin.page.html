@@ -1,0 +1,65 @@
+<div class="pagina ancha">
+  <div class="encabezado-pagina">
+    <div>
+      <h1><app-icono nombre="escudo" [tam]="22" /> Administración de FlujoBot</h1>
+      <p>Todas las empresas de la plataforma: plan, vencimiento y consumo del mes.</p>
+    </div>
+    <input class="buscar" type="search" placeholder="Buscar empresa" (change)="buscar($event)" />
+  </div>
+
+  <div class="cifras">
+    <div class="tarjeta"><span class="suave">Empresas</span><strong>{{ totales().empresas }}</strong></div>
+    <div class="tarjeta"><span class="suave">Activas y vigentes</span><strong>{{ totales().activas }}</strong></div>
+    <div class="tarjeta"><span class="suave">Con plan de pago</span><strong>{{ totales().pago }}</strong></div>
+    <div class="tarjeta"><span class="suave">Conversaciones del mes</span><strong>{{ totales().conversaciones | number }}</strong></div>
+  </div>
+
+  <div class="tarjeta">
+    <table class="tabla">
+      <thead>
+        <tr><th>Empresa</th><th>Plan</th><th>Vence</th><th>Uso del mes</th><th>Bots</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (e of empresas(); track e.id) {
+          <tr [class.suspendida]="!e.activa">
+            <td>
+              <b>{{ e.nombre }}</b>
+              <small class="suave">{{ e.giro }} · desde {{ e.creada | date: 'd MMM yyyy' }}</small>
+              @if (!e.activa) {
+                <small class="insignia insignia-roja">Suspendida{{ e.suspendidaMotivo ? ': ' + e.suspendidaMotivo : '' }}</small>
+              }
+            </td>
+            <td>
+              <select [value]="e.plan" (change)="cambiarPlan(e, $any($event.target).value)" aria-label="Plan">
+                @for (p of planes; track p.clave) {
+                  <option [value]="p.clave">{{ p.nombre }}</option>
+                }
+              </select>
+            </td>
+            <td>
+              <span [class.vencido]="!e.vigente">{{ e.vence ? (e.vence | date: 'd MMM yyyy') : '—' }}</span>
+              <span class="sumar">
+                <button type="button" class="btn btn-chico btn-fantasma" (click)="sumarDias(e, 30)">+30 días</button>
+              </span>
+            </td>
+            <td class="uso">
+              <span title="Conversaciones">{{ e.uso.conversaciones | number }} / {{ e.limites.conversaciones | number }}</span>
+              <span class="pista"><span [style.width.%]="porcentaje(e.uso.conversaciones, e.limites.conversaciones)"></span></span>
+              <small class="suave">IA {{ e.uso.ia }} · campañas {{ e.uso.campanas }}</small>
+            </td>
+            <td class="num">{{ e.bots }}</td>
+            <td class="num">
+              @if (e.activa) {
+                <button type="button" class="btn btn-chico btn-fantasma btn-peligro" (click)="suspender(e)">Suspender</button>
+              } @else {
+                <button type="button" class="btn btn-chico" (click)="reactivar(e)">Reactivar</button>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6" class="vacio">Sin empresas.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import { SesionService } from '../sesion/sesion.service';
-import { Giro, Sesion } from '../../models';
+import { Empresa, Giro, Sesion, Usuario } from '../../models';
 
 export interface DatosRegistro {
   empresa: string;
@@ -23,6 +23,13 @@ export class AuthService {
 
   async registrar(datos: DatosRegistro): Promise<void> {
     this.sesion.iniciar(await this.api.post<Sesion>('/auth/registro', datos));
+  }
+
+  /** Datos frescos de quien entró y de su empresa (permisos, personalización, suspensión). */
+  async refrescar(): Promise<void> {
+    const { usuario, empresa } = await this.api.get<{ usuario: Usuario; empresa: Empresa }>('/auth/perfil');
+    this.sesion.actualizarUsuario(usuario);
+    this.sesion.actualizarEmpresa(empresa);
   }
 
   salir(): void {

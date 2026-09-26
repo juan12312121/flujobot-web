@@ -160,3 +160,25 @@ main {
     margin: 14px 0 0 16px;
   }
 }
+
+.aviso-plan {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 12px 24px 0;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: var(--aviso-claro);
+  color: var(--aviso);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.aviso-plan.urgente {
+  background: var(--peligro-claro);
+  color: var(--peligro);
+}
+
+.aviso-plan b {
+  margin-left: auto;
+}

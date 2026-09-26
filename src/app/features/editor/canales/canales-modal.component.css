@@ -1,0 +1,107 @@
+.pestanas {
+  display: flex;
+  gap: 4px;
+  margin: -4px 0 14px;
+  border-bottom: 1px solid var(--borde);
+  overflow-x: auto;
+}
+
+.pestanas button {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 8px 10px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--suave);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.pestanas button.activa {
+  border-bottom-color: var(--primario);
+  color: var(--texto);
+}
+
+.punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primario);
+}
+
+.aviso {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--aviso-claro);
+  color: var(--aviso);
+}
+
+.conectado {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--primario-claro);
+  color: var(--primario-osc);
+}
+
+.conectado div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.conectado small {
+  color: var(--suave);
+}
+
+.pasos {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  line-height: 1.6;
+}
+
+.linea {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.linea input {
+  flex: 1;
+}
+
+.corto input {
+  max-width: 90px;
+  flex: none;
+}
+
+.interruptor {
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+
+.interruptor small {
+  display: block;
+  color: var(--suave);
+  font-size: 12px;
+}
+
+.ayuda {
+  margin: 8px 0 0;
+  color: var(--suave);
+  font-size: 12.5px;
+}

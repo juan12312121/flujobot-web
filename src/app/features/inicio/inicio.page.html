@@ -28,6 +28,18 @@
         <strong>{{ r.conversacionesHoy }}</strong>
         <small [class.alerta]="r.esperandoAsesor">{{ r.esperandoAsesor }} esperando asesor</small>
       </a>
+      <a class="tarjeta cifra" routerLink="/encuestas">
+        <span>Satisfacción (30 días)</span>
+        <strong>{{ r.satisfaccion?.promedio ?? '—' }}<small class="de">/ 5</small></strong>
+        <small>{{ r.satisfaccion?.total ?? 0 }} calificaciones</small>
+      </a>
+      @if (m().pedidos && r.carritosRecuperados) {
+        <a class="tarjeta cifra" routerLink="/pedidos">
+          <span>Carritos recuperados</span>
+          <strong>{{ r.carritosRecuperados }}</strong>
+          <small>{{ t().pedidos.toLowerCase() }} este mes tras el recordatorio</small>
+        </a>
+      }
       @if (m().catalogo) {
         <a class="tarjeta cifra" routerLink="/catalogo">
           <span>{{ t().items }}</span>

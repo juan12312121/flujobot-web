@@ -3,12 +3,14 @@ import { EmpresaService } from '../../core/services/empresa/empresa.service';
 import { TemaService } from '../../core/services/tema/tema.service';
 import { AvisosService } from '../../core/services/avisos/avisos.service';
 import { GIROS, PALETAS } from '../../core/empresa/giros';
-import { Empresa, Giro, Horario, Marca, Modulos, OpcionGiro, Terminos } from '../../core/models';
+import { ConfigAvisos, Empresa, Giro, Horario, Marca, Modulos, OpcionGiro, Terminos } from '../../core/models';
+import { AVISOS_BASE, TEXTOS_AVISO } from '../../core/empresa/avisos';
+import { CobrosComponent } from './cobros/cobros.component';
 import { LogoEmpresaComponent } from '../../shared/components/logo-empresa/logo-empresa.component';
 import { IconoComponent } from '../../shared/components/icono/icono.component';
 import { SubirImagenComponent } from '../../shared/components/subir-imagen/subir-imagen.component';
 
-type Seccion = 'identidad' | 'apariencia' | 'modulos' | 'horario' | 'conocimiento';
+type Seccion = 'identidad' | 'apariencia' | 'modulos' | 'horario' | 'conocimiento' | 'avisos' | 'cobros';
 
 const MAX_CONOCIMIENTO = 8000;
 
@@ -54,7 +56,7 @@ const TERMINOS: { clave: keyof Terminos; etiqueta: string }[] = [
  */
 @Component({
   selector: 'app-empresa',
-  imports: [IconoComponent, LogoEmpresaComponent, SubirImagenComponent],
+  imports: [IconoComponent, LogoEmpresaComponent, SubirImagenComponent, CobrosComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './empresa.page.html',
   styleUrl: './empresa.page.css',
@@ -71,6 +73,7 @@ export class EmpresaPage implements OnInit {
   protected readonly listaTerminos = TERMINOS;
   protected readonly maxConocimiento = MAX_CONOCIMIENTO;
   protected readonly guiaConocimiento = GUIA_CONOCIMIENTO;
+  protected readonly textosAviso = TEXTOS_AVISO;
 
   protected readonly seccion = signal<Seccion>('identidad');
   protected readonly original = signal<Empresa | null>(null);
@@ -88,7 +91,9 @@ export class EmpresaPage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      const [empresa, giros] = await Promise.all([this.api.obtener(), this.api.giros().catch(() => [])]);
+      const [crudo, giros] = await Promise.all([this.api.obtener(), this.api.giros().catch(() => [])]);
+      // Empresas creadas antes de los avisos no traen la sección: se completa con los valores de fábrica
+      const empresa = { ...crudo, avisos: { ...AVISOS_BASE, ...(crudo.avisos ?? {}), textos: { ...(crudo.avisos?.textos ?? {}) } } };
       this.original.set(empresa);
       this.borrador.set(structuredClone(empresa));
       this.opcionesGiro.set(giros);
@@ -153,6 +158,16 @@ export class EmpresaPage implements OnInit {
     this.borrador.update((b) => (b ? { ...b, horario: { ...b.horario, [campo]: valor } } : b));
   }
 
+  protected aviso(clave: Exclude<keyof ConfigAvisos, 'textos'>, evento: Event): void {
+    const activo = (evento.target as HTMLInputElement).checked;
+    this.borrador.update((b) => (b ? { ...b, avisos: { ...b.avisos, [clave]: activo } } : b));
+  }
+
+  protected textoAviso(clave: string, evento: Event): void {
+    const valor = (evento.target as HTMLTextAreaElement).value;
+    this.borrador.update((b) => (b ? { ...b, avisos: { ...b.avisos, textos: { ...b.avisos.textos, [clave]: valor } } } : b));
+  }
+
   // ───── Guardar / descartar ─────
 
   protected descartar(): void {
@@ -180,6 +195,7 @@ export class EmpresaPage implements OnInit {
         modulos: b.modulos,
         horario: b.horario,
         conocimiento: b.conocimiento ?? '',
+        avisos: b.avisos,
       });
       this.original.set(guardada);
       this.borrador.set(structuredClone(guardada));

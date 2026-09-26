@@ -94,6 +94,7 @@ export class AgendaPage implements OnInit {
     try {
       const editada = await this.api.actualizar(c.id, { estado });
       this.citas.update((l) => l.map((x) => (x.id === editada.id ? editada : x)));
+      if (editada.aviso?.enviado) this.avisos.exito(`Se le avisó al ${this.sesion.terminos().cliente.toLowerCase()}`);
     } catch (e) {
       this.avisos.error(e);
     }
@@ -109,9 +110,10 @@ export class AgendaPage implements OnInit {
     this.guardando.set(true);
     try {
       const v = this.form.getRawValue();
-      await this.api.crear({ ...v, duracionMin: Number(v.duracionMin) || undefined });
+      const cita = await this.api.crear({ ...v, duracionMin: Number(v.duracionMin) || undefined });
       this.creando.set(false);
-      this.avisos.exito(`${this.sesion.terminos().cita} agendada`);
+      const recordatorios = Array.isArray(cita.recordatorios) ? cita.recordatorios.length : 0;
+      this.avisos.exito(`${this.sesion.terminos().cita} agendada${recordatorios ? ` · se le mandarán ${recordatorios} recordatorio(s) por WhatsApp` : ''}`);
       await this.cargar();
     } catch (e) {
       this.avisos.error(e);

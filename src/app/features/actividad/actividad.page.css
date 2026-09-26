@@ -1,0 +1,46 @@
+.filtros {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.linea-tiempo {
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+}
+
+.linea-tiempo li {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 14px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.linea-tiempo li:last-child {
+  border-bottom: 0;
+}
+
+time {
+  color: var(--suave);
+  font-size: 12.5px;
+}
+
+.linea-tiempo div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detalle {
+  font-size: 13px;
+  word-break: break-word;
+}
+
+@media (max-width: 600px) {
+  .linea-tiempo li {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}

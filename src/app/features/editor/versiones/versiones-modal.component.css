@@ -1,0 +1,60 @@
+.intro {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--primario-claro);
+  color: var(--primario-osc);
+  line-height: 1.45;
+}
+
+.versiones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.versiones li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+
+.versiones li.activa {
+  border-color: color-mix(in srgb, var(--primario) 45%, var(--borde));
+  background: var(--primario-claro);
+}
+
+.numero {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--fondo);
+  font-weight: 700;
+}
+
+.datos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.datos small {
+  color: var(--suave);
+}
+
+.vacio {
+  color: var(--suave);
+  text-align: center;
+}

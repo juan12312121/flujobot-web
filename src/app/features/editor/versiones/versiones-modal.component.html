@@ -1,0 +1,36 @@
+<app-modal titulo="Versiones publicadas" [ancho]="560" (cerrar)="cerrar.emit()">
+  <p class="intro">
+    <app-icono nombre="historial" [tam]="18" />
+    Cada vez que publicas se guarda una copia. Si algo se rompió, regresa a una que funcionaba: el borrador queda como esa versión y tú decides cuándo publicar.
+  </p>
+
+  @if (lista(); as versiones) {
+    @if (versiones.length === 0) {
+      <p class="vacio">Todavía no hay versiones: aparecen aquí cuando publicas.</p>
+    } @else {
+      <ul class="versiones">
+        @for (v of versiones; track v.id) {
+          <li [class.activa]="v.activa">
+            <div class="numero">v{{ v.version }}</div>
+            <div class="datos">
+              <strong>{{ v.createdAt | date: "d 'de' MMMM, HH:mm" }}</strong>
+              <small>{{ v.publicadaPor || 'sin registro' }}</small>
+            </div>
+            @if (v.activa) {
+              <span class="insignia insignia-verde">Publicada ahora</span>
+            } @else {
+              <button type="button" class="btn btn-chico" [disabled]="restaurando() !== null" (click)="restaurar(v)">
+                <app-icono nombre="historial" [tam]="14" /> {{ restaurando() === v.id ? 'Restaurando…' : 'Restaurar' }}
+              </button>
+            }
+          </li>
+        }
+      </ul>
+    }
+  } @else {
+    <p class="suave">Cargando…</p>
+  }
+  <div pie>
+    <button type="button" class="btn" (click)="cerrar.emit()">Cerrar</button>
+  </div>
+</app-modal>

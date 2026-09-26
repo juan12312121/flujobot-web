@@ -156,11 +156,110 @@
         <input type="checkbox" [checked]="n.datos.sinProductos ?? false" (change)="casilla('sinProductos', $event)" />
         Registrar aunque no haya productos (solicitud, cotización, prospecto)
       </label>
+      <label class="check">
+        <input type="checkbox" [checked]="n.datos.cobrar ?? false" (change)="casilla('cobrar', $event)" />
+        Cobrar en línea: mandar link de pago (Mercado Pago o Stripe)
+      </label>
+      @if (n.datos.cobrar) {
+        <p class="ayuda">Usa la cuenta que configures en <b>Mi empresa → Cobros</b>. Cuando pague, el pedido se marca como pagado y se le avisa al cliente.</p>
+      }
       <label class="campo">
         <span>Mensaje de confirmación</span>
         <textarea rows="4" [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
-        <small>Se guarda con folio en "{{ terminos().pedidos }}" junto con las variables (nombre, correo…). Usa {{ '{{folio}}' }} y {{ '{{total}}' }}.</small>
+        <small>
+          Se guarda con folio en "{{ terminos().pedidos }}" junto con las variables (nombre, correo…). Usa {{ '{{folio}}' }}, {{ '{{total}}' }} y, si cobras,
+          {{ '{{linkPago}}' }}.
+        </small>
       </label>
+    }
+
+    @case ('estado') {
+      <label class="campo">
+        <span>Qué mostrar</span>
+        <select [value]="n.datos.que ?? 'ambos'" (change)="texto('que', $event)">
+          <option value="ambos">{{ terminos().pedidos }} y {{ terminos().citas.toLowerCase() }}</option>
+          <option value="pedidos">Solo {{ terminos().pedidos.toLowerCase() }}</option>
+          <option value="citas">Solo {{ terminos().citas.toLowerCase() }}</option>
+        </select>
+      </label>
+      <label class="campo">
+        <span>Encabezado</span>
+        <input [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)" placeholder="Esto es lo que encontré:" />
+      </label>
+      <label class="campo">
+        <span>Si no tiene nada</span>
+        <input [value]="n.datos.textoNada ?? ''" (change)="texto('textoNada', $event)" placeholder="No encontré pedidos ni citas con este número." />
+      </label>
+      <p class="ayuda">
+        Busca por el número (o usuario) de quien escribe y muestra sus últimos 3 {{ terminos().pedidos.toLowerCase() }} con su estado ("En camino", "Listo para
+        recoger"…) y sus próximas {{ terminos().citas.toLowerCase() }}. El estado lo cambias en la pantalla de {{ terminos().pedidos }}.
+      </p>
+    }
+
+    @case ('esperar') {
+      <label class="campo">
+        <span>Mensaje (opcional)</span>
+        <textarea rows="2" [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
+      </label>
+      <div class="fila">
+        <label class="campo">
+          <span>Esperar</span>
+          <input type="number" min="1" [value]="esperaValor()" (change)="cambiarEspera($any($event.target).value, esperaUnidad())" />
+        </label>
+        <label class="campo">
+          <span>&nbsp;</span>
+          <select [value]="esperaUnidad()" (change)="cambiarEspera(esperaValor(), $any($event.target).value)">
+            <option value="1">minutos</option>
+            <option value="60">horas</option>
+            <option value="1440">días</option>
+          </select>
+        </label>
+      </div>
+      <p class="ayuda">
+        Si contesta antes, sigue por <b>Respondió</b> (lo que escribió queda en {{ '{{respuesta}}' }}). Si no, al cumplirse el tiempo el bot le escribe por su
+        cuenta siguiendo <b>No respondió</b>: ideal para "¿sigues ahí?", seguimientos o recordatorios. En el simulador escribe <code>/pasar</code> para probarlo.
+      </p>
+    }
+
+    @case ('encuesta') {
+      <label class="campo">
+        <span>Pregunta</span>
+        <textarea rows="2" [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
+      </label>
+      <label class="check">
+        <input type="checkbox" [checked]="n.datos.pedirComentario ?? false" (change)="casilla('pedirComentario', $event)" />
+        Pedir un comentario después de la calificación
+      </label>
+      <div class="fila">
+        <label class="campo">
+          <span>Si califica 4 o 5</span>
+          <input [value]="n.datos.textoBuena ?? ''" (change)="texto('textoBuena', $event)" placeholder="¡Gracias por tu calificación!" />
+        </label>
+        <label class="campo">
+          <span>Si califica 1 a 3</span>
+          <input [value]="n.datos.textoMala ?? ''" (change)="texto('textoMala', $event)" placeholder="Gracias, vamos a mejorar." />
+        </label>
+      </div>
+      <p class="ayuda">Las respuestas se juntan en <b>Encuestas</b> con el promedio. Conecta "Mala" a un Asesor para atender al cliente molesto.</p>
+    }
+
+    @case ('permiso') {
+      <label class="campo">
+        <span>Pregunta</span>
+        <textarea rows="2" [value]="n.datos.texto ?? ''" (input)="texto('texto', $event)"></textarea>
+        <small>Se agregan solas las opciones "1. Sí" y "2. No".</small>
+      </label>
+      <div class="fila">
+        <label class="campo">
+          <span>Si acepta</span>
+          <input [value]="n.datos.textoSi ?? ''" (change)="texto('textoSi', $event)" placeholder="¡Listo! Te avisaremos de promociones." />
+        </label>
+        <label class="campo">
+          <span>Si no acepta (opcional)</span>
+          <input [value]="n.datos.textoNo ?? ''" (change)="texto('textoNo', $event)" />
+        </label>
+      </div>
+      <p class="ayuda">Las <b>Campañas</b> solo le llegan a quien aceptó aquí (o escribió ALTA). Cualquiera puede escribir BAJA para dejar de recibirlas.</p>
     }
 
     @case ('cita') {

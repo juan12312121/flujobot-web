@@ -1,0 +1,88 @@
+.resumen {
+  display: grid;
+  grid-template-columns: 200px 200px 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.resumen .tarjeta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 16px;
+}
+
+.promedio,
+.satisfechos {
+  align-items: center;
+  text-align: center;
+}
+
+.numero {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.estrellas {
+  display: flex;
+  gap: 2px;
+  margin: 4px 0;
+  color: #d0d5dd;
+}
+
+.estrellas .llena {
+  color: #eab308;
+}
+
+.distribucion {
+  gap: 6px;
+}
+
+.barra {
+  display: grid;
+  grid-template-columns: 16px 1fr 36px;
+  gap: 8px;
+  align-items: center;
+  font-size: 12.5px;
+}
+
+.pista {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--fondo);
+  overflow: hidden;
+}
+
+.pista span {
+  display: block;
+  height: 100%;
+  background: var(--primario);
+}
+
+.pista span.mala {
+  background: var(--aviso);
+}
+
+.cuantos {
+  color: var(--suave);
+  text-align: right;
+}
+
+.calif {
+  font-weight: 700;
+  color: var(--primario-osc);
+}
+
+.calif.mala {
+  color: var(--peligro);
+}
+
+@media (max-width: 760px) {
+  .resumen {
+    grid-template-columns: 1fr 1fr;
+  }
+  .distribucion {
+    grid-column: 1 / -1;
+  }
+}

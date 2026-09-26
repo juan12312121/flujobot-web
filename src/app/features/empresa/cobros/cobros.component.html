@@ -1,0 +1,53 @@
+@if (estado(); as e) {
+  <p class="ayuda">
+    Conecta tu cuenta para que el bloque <b>Registrar pedido</b> (con "Cobrar en línea") mande un link de pago. Cuando el cliente paga, el pedido se marca
+    como pagado solo y se le avisa. El dinero llega directo a tu cuenta; FlujoBot no cobra comisión.
+  </p>
+
+  <div class="proveedores">
+    @for (p of [{ id: 'ninguno', nombre: 'Sin cobro en línea' }, { id: 'mercadopago', nombre: 'Mercado Pago' }, { id: 'stripe', nombre: 'Stripe' }]; track p.id) {
+      <button type="button" [class.elegido]="proveedor() === p.id" (click)="proveedor.set($any(p.id))">{{ p.nombre }}</button>
+    }
+  </div>
+
+  @if (proveedor() !== 'ninguno') {
+    @if (e.configurado && e.proveedor === proveedor()) {
+      <p class="listo"><app-icono nombre="check" [tam]="16" /> Cuenta conectada. Pega otra llave solo si quieres cambiarla.</p>
+    }
+    <label class="campo">
+      <span>{{ proveedor() === 'stripe' ? 'Secret key (sk_live_… o sk_test_…)' : 'Access Token (APP_USR-… o TEST-…)' }}</span>
+      <input #llave type="password" autocomplete="off" [placeholder]="e.configurado && e.proveedor === proveedor() ? '•••••••• (guardada)' : ''" />
+      <small>
+        @if (proveedor() === 'stripe') {
+          Stripe → Developers → API keys.
+        } @else {
+          Mercado Pago → Tus integraciones → Credenciales de producción.
+        }
+        Se guarda cifrada y nunca se vuelve a mostrar.
+      </small>
+    </label>
+    @if (proveedor() === 'stripe') {
+      <div class="bloque">
+        <span class="etiqueta">Aviso de pagos (webhook)</span>
+        <p class="ayuda">En Stripe → Developers → Webhooks agrega este endpoint con el evento <code>checkout.session.completed</code> y pega aquí su "Signing secret".</p>
+        @if (e.urlAviso && e.proveedor === 'stripe') {
+          <div class="url"><code>{{ e.urlAviso }}</code><button type="button" class="btn btn-chico" (click)="copiar(e.urlAviso)">Copiar</button></div>
+        } @else {
+          <p class="suave">La URL aparece después de guardar la llave.</p>
+        }
+        <label class="campo">
+          <span>Signing secret (whsec_…)</span>
+          <input #secreto type="password" autocomplete="off" [placeholder]="e.secretoWebhook ? '•••••••• (guardado)' : ''" />
+        </label>
+        <button type="button" class="btn btn-primario" [disabled]="guardando()" (click)="guardar(llave.value, secreto.value)">{{ guardando() ? 'Validando…' : 'Guardar' }}</button>
+      </div>
+    } @else {
+      <p class="ayuda">Mercado Pago avisa los pagos solo; no tienes que configurar nada más.</p>
+      <button type="button" class="btn btn-primario" [disabled]="guardando()" (click)="guardar(llave.value, '')">{{ guardando() ? 'Validando…' : 'Guardar' }}</button>
+    }
+  } @else if (e.proveedor !== 'ninguno') {
+    <button type="button" class="btn" [disabled]="guardando()" (click)="guardar('', '')">Apagar cobros en línea</button>
+  }
+} @else {
+  <p class="suave">Cargando…</p>
+}
