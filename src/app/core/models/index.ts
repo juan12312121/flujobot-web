@@ -11,7 +11,7 @@ export interface ErrorApi {
   detalles: { campo?: string; mensaje?: string; nodoId?: string | null; nivel?: string }[];
 }
 
-export type Rol = 'admin' | 'editor';
+export type Rol = 'admin' | 'editor' | 'cajero' | 'recepcion' | 'repartidor';
 
 export interface Usuario {
   id: string;
@@ -19,6 +19,8 @@ export interface Usuario {
   nombre: string;
   email: string;
   rol: Rol;
+  telefono?: string;
+  emailVerificado?: boolean;
   createdAt?: string;
   /** Administrador de toda la plataforma FlujoBot (correos en SUPERADMINS del servidor). */
   esSuperadmin?: boolean;
@@ -464,6 +466,8 @@ export interface Pedido {
   canal: Canal;
   pago?: { estado: EstadoPago; proveedor: string; url: string; pagadoEn: string | null };
   recuperado?: boolean;
+  repartidorId?: string;
+  repartidorNombre?: string;
   createdAt: string;
   /** Solo al cambiar el estado: si se le avisó al cliente. */
   aviso?: { enviado: boolean; error?: string };

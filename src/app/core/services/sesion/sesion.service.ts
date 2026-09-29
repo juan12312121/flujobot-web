@@ -31,6 +31,7 @@ export class SesionService {
   readonly autenticado = computed(() => this.token() !== null);
   readonly esAdmin = computed(() => this.usuario()?.rol === 'admin');
   readonly esSuperadmin = computed(() => this.usuario()?.esSuperadmin === true);
+  readonly rol = computed(() => this.usuario()?.rol);
   /** Palabras del panel según la empresa ("Servicios", "Pacientes"...). */
   readonly terminos = computed<Terminos>(() => ({ ...TERMINOS_BASE, ...(this.empresa()?.terminos ?? {}) }));
   readonly modulos = computed<Modulos>(() => ({ ...MODULOS_BASE, ...(this.empresa()?.modulos ?? {}) }));

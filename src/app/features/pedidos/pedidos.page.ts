@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { DatePipe, KeyValuePipe } from '@angular/common';
 import { PedidosService } from '../../core/services/pedidos/pedidos.service';
 import { AvisosService } from '../../core/services/avisos/avisos.service';
-import { EstadoPago, EstadoPedido, Pedido } from '../../core/models';
+import { EstadoPago, EstadoPedido, Pedido, Usuario } from '../../core/models';
+import { UsuariosService } from '../../core/services/usuarios/usuarios.service';
 import { DineroPipe } from '../../shared/pipes/dinero.pipe';
 import { SesionService } from '../../core/services/sesion/sesion.service';
 import { IconoComponent } from '../../shared/components/icono/icono.component';
@@ -34,8 +35,13 @@ const OCULTAS = new Set(['producto', 'cantidad', 'total', 'folio', 'opcion', 'em
 export class PedidosPage implements OnInit {
   private readonly api = inject(PedidosService);
   private readonly avisos = inject(AvisosService);
-  protected readonly t = inject(SesionService).terminos;
-  protected readonly estados = ESTADOS_PEDIDO;
+  private readonly usuariosApi = inject(UsuariosService);
+  private readonly sesion = inject(SesionService);
+  protected readonly t = this.sesion.terminos;
+  /** El repartidor ve solo sus entregas, en tarjetas grandes para el celular. */
+  protected readonly esRepartidor = this.sesion.rol() === 'repartidor';
+  protected readonly estados = this.esRepartidor ? ESTADOS_PEDIDO.filter((e) => ['enviado', 'entregado'].includes(e.valor)) : ESTADOS_PEDIDO;
+  protected readonly repartidores = signal<Usuario[]>([]);
   protected readonly pagos = PAGOS;
   protected readonly canales = CANALES;
   protected readonly pedidos = signal<Pedido[]>([]);
@@ -46,7 +52,37 @@ export class PedidosPage implements OnInit {
   protected readonly avisar = signal(true);
 
   async ngOnInit(): Promise<void> {
+    if (!this.esRepartidor) {
+      this.usuariosApi
+        .listar()
+        .then((l) => this.repartidores.set(l.filter((u) => u.rol === 'repartidor')))
+        .catch(() => {});
+    }
     await this.cargar();
+  }
+
+  protected textoEstado(estado: EstadoPedido): string {
+    return ESTADOS_PEDIDO.find((e) => e.valor === estado)?.texto ?? estado;
+  }
+
+  protected async asignar(p: Pedido, usuarioId: string): Promise<void> {
+    try {
+      const editado = await this.api.asignarRepartidor(p.id, usuarioId || null);
+      this.pedidos.update((l) => l.map((x) => (x.id === editado.id ? editado : x)));
+      this.avisos.exito(usuarioId ? `${p.folio} asignado a ${editado.repartidorNombre}` : `${p.folio} sin repartidor`);
+    } catch (e) {
+      this.avisos.error(e);
+    }
+  }
+
+  /** Dirección para abrir en el mapa (el bot la guarda en "direccion" si la pregunta). */
+  protected direccion(p: Pedido): string {
+    const d = p.datos?.['direccion'];
+    return typeof d === 'string' ? d : '';
+  }
+
+  protected mapa(p: Pedido): string {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(this.direccion(p))}`;
   }
 
   protected datos(p: Pedido): Record<string, unknown> {

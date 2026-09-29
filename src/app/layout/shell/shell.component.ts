@@ -5,6 +5,8 @@ import { AuthService } from '../../core/services/auth/auth.service';
 import { Modulos } from '../../core/models';
 import { ModulosService } from '../../core/services/modulos/modulos.service';
 import { ICONOS } from '../../core/iconos/iconos';
+import { puede, Seccion, nombreRol } from '../../core/permisos/permisos';
+import { AvisosService } from '../../core/services/avisos/avisos.service';
 import { NombreIcono } from '../../core/iconos/iconos';
 import { LogoEmpresaComponent } from '../../shared/components/logo-empresa/logo-empresa.component';
 import { IconoComponent } from '../../shared/components/icono/icono.component';
@@ -16,6 +18,7 @@ interface Enlace {
   modulo?: keyof Modulos;
   soloAdmin?: boolean;
   soloSuperadmin?: boolean;
+  seccion?: Seccion;
 }
 
 
@@ -37,19 +40,19 @@ export class ShellComponent {
   protected readonly enlaces = computed(() => {
     const t = this.sesion.terminos();
     const todos: Enlace[] = [
-      { ruta: '/inicio', texto: 'Inicio', icono: 'inicio' },
-      { ruta: '/bots', texto: 'Bots', icono: 'bot' },
-      { ruta: '/agenda', texto: t.citas, icono: 'calendario', modulo: 'agenda' },
-      { ruta: '/catalogo', texto: t.items, icono: 'paquete', modulo: 'catalogo' },
-      { ruta: '/pedidos', texto: t.pedidos, icono: 'carrito', modulo: 'pedidos' },
+      { ruta: '/inicio', texto: 'Inicio', icono: 'inicio', seccion: 'gestion' },
+      { ruta: '/bots', texto: 'Bots', icono: 'bot', seccion: 'bots' },
+      { ruta: '/agenda', texto: t.citas, icono: 'calendario', modulo: 'agenda', seccion: 'agenda' },
+      { ruta: '/catalogo', texto: t.items, icono: 'paquete', modulo: 'catalogo', seccion: 'catalogo' },
+      { ruta: '/pedidos', texto: this.sesion.rol() === 'repartidor' ? 'Mis entregas' : t.pedidos, icono: 'carrito', modulo: 'pedidos', seccion: 'pedidos' },
       // Módulos que armó la empresa (órdenes de servicio, inventario...)
       ...this.modulosPropios
         .lista()
         .filter((m) => m.activo)
-        .map((m): Enlace => ({ ruta: `/m/${m.clave}`, texto: m.nombre, icono: (m.icono in ICONOS ? m.icono : 'registro') as NombreIcono })),
-      { ruta: '/conversaciones', texto: 'Conversaciones', icono: 'chat' },
-      { ruta: '/campanas', texto: 'Campañas', icono: 'megafono' },
-      { ruta: '/encuestas', texto: 'Encuestas', icono: 'estrella' },
+        .map((m): Enlace => ({ ruta: `/m/${m.clave}`, texto: m.nombre, icono: (m.icono in ICONOS ? m.icono : 'registro') as NombreIcono, seccion: 'modulos' })),
+      { ruta: '/conversaciones', texto: 'Conversaciones', icono: 'chat', seccion: 'conversaciones' },
+      { ruta: '/campanas', texto: 'Campañas', icono: 'megafono', seccion: 'campanas' },
+      { ruta: '/encuestas', texto: 'Encuestas', icono: 'estrella', seccion: 'gestion' },
       { ruta: '/equipo', texto: 'Equipo', icono: 'equipo', soloAdmin: true },
       { ruta: '/actividad', texto: 'Actividad', icono: 'historial', soloAdmin: true },
       { ruta: '/empresa', texto: 'Mi empresa', icono: 'ajustes', soloAdmin: true },
@@ -57,7 +60,11 @@ export class ShellComponent {
     ];
     const modulos = this.sesion.modulos();
     return todos.filter(
-      (e) => (!e.soloAdmin || this.sesion.esAdmin()) && (!e.soloSuperadmin || this.sesion.esSuperadmin()) && (!e.modulo || modulos[e.modulo]),
+      (e) =>
+        (!e.soloAdmin || this.sesion.esAdmin()) &&
+        (!e.soloSuperadmin || this.sesion.esSuperadmin()) &&
+        (!e.modulo || modulos[e.modulo]) &&
+        (!e.seccion || puede(this.sesion.rol(), e.seccion)),
     );
   });
 
@@ -73,7 +80,20 @@ export class ShellComponent {
   constructor() {
     // La personalización y los permisos pudieron cambiar en otra sesión: traer lo vigente
     this.auth.refrescar().catch(() => {});
-    this.modulosPropios.cargar().catch(() => {});
+    if (puede(this.sesion.rol(), 'modulos')) this.modulosPropios.cargar().catch(() => {});
+  }
+
+  protected readonly nombreRol = nombreRol;
+  private readonly avisos = inject(AvisosService);
+  protected readonly reenviado = signal(false);
+
+  protected async reenviar(): Promise<void> {
+    try {
+      this.avisos.exito((await this.auth.reenviarVerificacion()).mensaje);
+      this.reenviado.set(true);
+    } catch (e) {
+      this.avisos.error(e);
+    }
   }
 
   protected salir(): void {

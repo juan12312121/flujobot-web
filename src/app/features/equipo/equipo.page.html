@@ -2,7 +2,7 @@
   <div class="encabezado-pagina">
     <div>
       <h1>Equipo</h1>
-      <p>Personas de tu empresa que pueden entrar al panel.</p>
+      <p>Personas de tu empresa que pueden entrar al panel. Cada rol ve solo lo que le toca.</p>
     </div>
   </div>
 
@@ -13,9 +13,29 @@
         <tbody>
           @for (u of usuarios(); track u.id) {
             <tr>
-              <td>{{ u.nombre }}</td>
-              <td class="suave">{{ u.email }}</td>
-              <td><span class="insignia" [class.insignia-verde]="u.rol === 'admin'">{{ u.rol === 'admin' ? 'Administrador' : 'Editor' }}</span></td>
+              <td>
+                {{ u.nombre }}
+                @if (u.telefono) {
+                  <small class="suave">{{ u.telefono }}</small>
+                }
+              </td>
+              <td class="suave">
+                {{ u.email }}
+                @if (!u.emailVerificado) {
+                  <small class="insignia insignia-ambar">sin confirmar</small>
+                }
+              </td>
+              <td>
+                @if (u.id === sesion.usuario()?.id) {
+                  <span class="insignia insignia-verde">Administrador (tú)</span>
+                } @else {
+                  <select class="rol" [value]="u.rol" (change)="cambiarRol(u, $any($event.target).value)" [title]="descripcion(u.rol)" aria-label="Rol">
+                    @for (r of roles; track r.rol) {
+                      <option [value]="r.rol">{{ r.nombre }}</option>
+                    }
+                  </select>
+                }
+              </td>
               <td class="num">
                 @if (u.id !== sesion.usuario()?.id) {
                   <button type="button" class="btn btn-chico btn-fantasma btn-peligro" (click)="borrar(u)">Quitar</button>
@@ -35,10 +55,13 @@
       <label class="campo">
         <span>Rol</span>
         <select formControlName="rol">
-          <option value="editor">Editor — arma bots y catálogo</option>
-          <option value="admin">Administrador — además gestiona equipo y borra bots</option>
+          @for (r of roles; track r.rol) {
+            <option [value]="r.rol">{{ r.nombre }}</option>
+          }
         </select>
+        <small>{{ descripcion(form.controls.rol.value) }}</small>
       </label>
+      <label class="campo"><span>WhatsApp (opcional)</span><input formControlName="telefono" inputmode="tel" /><small>Útil para repartidores.</small></label>
       <button type="submit" class="btn btn-primario" [disabled]="form.invalid || guardando()">Agregar</button>
     </form>
   </div>

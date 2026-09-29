@@ -4,8 +4,9 @@ import { UsuariosService } from '../../core/services/usuarios/usuarios.service';
 import { AvisosService } from '../../core/services/avisos/avisos.service';
 import { SesionService } from '../../core/services/sesion/sesion.service';
 import { Rol, Usuario } from '../../core/models';
+import { ROLES } from '../../core/permisos/permisos';
 
-/** Usuarios de la empresa (solo admin). Los editores arman flujos y catálogo; no borran bots ni usuarios. */
+/** Usuarios de la empresa (solo admin), cada uno con su rol: editor, cajero, recepción, repartidor... */
 @Component({
   selector: 'app-equipo',
   imports: [ReactiveFormsModule],
@@ -20,12 +21,14 @@ export class EquipoPage implements OnInit {
   protected readonly sesion = inject(SesionService);
   protected readonly usuarios = signal<Usuario[]>([]);
   protected readonly guardando = signal(false);
+  protected readonly roles = ROLES;
 
   protected readonly form = this.fb.group({
     nombre: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
     rol: ['editor' as Rol],
+    telefono: [''],
   });
 
   async ngOnInit(): Promise<void> {
@@ -37,12 +40,27 @@ export class EquipoPage implements OnInit {
     try {
       const u = await this.api.crear(this.form.getRawValue());
       this.usuarios.update((l) => [...l, u]);
-      this.form.reset({ rol: 'editor' });
+      this.form.reset({ rol: 'editor', telefono: '' });
       this.avisos.exito(`${u.nombre} ya puede entrar`);
     } catch (e) {
       this.avisos.error(e);
     } finally {
       this.guardando.set(false);
+    }
+  }
+
+  protected descripcion(rol: Rol): string {
+    return ROLES.find((r) => r.rol === rol)?.descripcion ?? '';
+  }
+
+  protected async cambiarRol(u: Usuario, rol: Rol): Promise<void> {
+    try {
+      const editado = await this.api.editar(u.id, { rol });
+      this.usuarios.update((l) => l.map((x) => (x.id === u.id ? { ...x, ...editado } : x)));
+      this.avisos.exito(`${u.nombre} ahora es ${ROLES.find((r) => r.rol === rol)?.nombre.toLowerCase()}`);
+    } catch (e) {
+      this.avisos.error(e);
+      this.usuarios.update((l) => [...l]);
     }
   }
 

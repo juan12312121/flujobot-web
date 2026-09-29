@@ -1,4 +1,55 @@
 <div class="pagina">
+  @if (esRepartidor) {
+    <div class="encabezado-pagina">
+      <div>
+        <h1>Mis entregas</h1>
+        <p>{{ t().pedidos }} que te asignaron. Márcalos en camino y entregados desde aquí.</p>
+      </div>
+    </div>
+    <div class="entregas">
+      @for (p of pedidos(); track p.id) {
+        <article class="tarjeta entrega" [class.hecha]="p.estado === 'entregado'">
+          <header>
+            <b>{{ p.folio }}</b>
+            <span class="insignia" [class.insignia-verde]="p.estado === 'entregado'" [class.insignia-azul]="p.estado === 'enviado'">{{ textoEstado(p.estado) }}</span>
+          </header>
+          <p class="cliente">{{ p.nombreContacto || $any(p.datos)['cliente'] || 'Cliente' }}</p>
+          @if (direccion(p)) {
+            <a class="direccion" [href]="mapa(p)" target="_blank" rel="noopener"><app-icono nombre="derecha" [tam]="14" /> {{ direccion(p) }}</a>
+          }
+          <ul>
+            @for (i of p.items; track i.productoId) {
+              <li>{{ i.cantidad }} × {{ i.nombre }}</li>
+            }
+          </ul>
+          <p class="total">
+            {{ p.total | dinero }}
+            @if (p.pago?.estado === 'pagado') {
+              <span class="insignia insignia-verde">Pagado</span>
+            } @else {
+              <span class="insignia insignia-ambar">Cobrar al entregar</span>
+            }
+          </p>
+          <footer>
+            @if (p.canal === 'whatsapp') {
+              <a class="btn btn-chico" [href]="'https://wa.me/' + p.contacto" target="_blank" rel="noopener"><app-icono nombre="telefono" [tam]="14" /> WhatsApp</a>
+            }
+            @if (p.estado !== 'enviado' && p.estado !== 'entregado') {
+              <button type="button" class="btn btn-chico" (click)="cambiar(p, 'enviado')">En camino</button>
+            }
+            @if (p.pago?.estado !== 'pagado' && p.total > 0) {
+              <button type="button" class="btn btn-chico" (click)="marcarPagado(p)">Cobré</button>
+            }
+            @if (p.estado !== 'entregado') {
+              <button type="button" class="btn btn-chico btn-primario" (click)="cambiar(p, 'entregado')">Entregado</button>
+            }
+          </footer>
+        </article>
+      } @empty {
+        <div class="tarjeta vacio"><h2>Sin entregas asignadas</h2><p>Cuando te asignen un {{ t().pedido.toLowerCase() }} aparecerá aquí.</p></div>
+      }
+    </div>
+  } @else {
   <div class="encabezado-pagina">
     <div>
       <h1>{{ t().pedidos }}</h1>
@@ -29,7 +80,7 @@
       <div class="vacio"><h2>Sin {{ t().pedidos.toLowerCase() }}</h2><p>Cuando un {{ t().cliente.toLowerCase() }} termine con el bot aparecerá aquí.</p></div>
     } @else {
       <table class="tabla">
-        <thead><tr><th>Folio</th><th>{{ t().cliente }}</th><th>Fecha</th><th>Detalle</th><th class="num">Total</th><th>Estado</th></tr></thead>
+        <thead><tr><th>Folio</th><th>{{ t().cliente }}</th><th>Fecha</th><th>Detalle</th><th class="num">Total</th><th>Estado</th><th>Repartidor</th></tr></thead>
         <tbody>
           @for (p of pedidos(); track p.id) {
             <tr class="fila" (click)="abierto.set(abierto() === p.id ? null : p.id)">
@@ -57,10 +108,22 @@
                   }
                 </select>
               </td>
+              <td (click)="$event.stopPropagation()">
+                @if (repartidores().length) {
+                  <select class="repartidor" [value]="p.repartidorId ?? ''" (change)="asignar(p, $any($event.target).value)" aria-label="Repartidor">
+                    <option value="">—</option>
+                    @for (r of repartidores(); track r.id) {
+                      <option [value]="r.id" [selected]="r.id === p.repartidorId">{{ r.nombre }}</option>
+                    }
+                  </select>
+                } @else {
+                  <span class="suave">{{ p.repartidorNombre || '—' }}</span>
+                }
+              </td>
             </tr>
             @if (abierto() === p.id) {
               <tr class="detalle">
-                <td colspan="6">
+                <td colspan="7">
                   <div class="columnas">
                     <ul>
                       @for (i of p.items; track i.productoId) {
@@ -93,4 +156,5 @@
       </table>
     }
   </div>
+  }
 </div>

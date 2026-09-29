@@ -161,3 +161,30 @@ main {
   }
 }
 
+
+.aviso-correo {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 12px 24px 0;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: var(--aviso-claro);
+  color: var(--aviso);
+  font-size: 13px;
+}
+
+.aviso-correo span {
+  flex: 1;
+  min-width: 180px;
+}
+
+.aviso-correo {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  .aviso-correo {
+    margin: 12px 16px 0;
+  }
+}

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TableroService } from '../../core/services/tablero/tablero.service';
 import { SesionService } from '../../core/services/sesion/sesion.service';
 import { AvisosService } from '../../core/services/avisos/avisos.service';
@@ -22,7 +22,13 @@ export class InicioPage implements OnInit {
   protected readonly m = this.sesion.modulos;
   protected readonly resumen = signal<Resumen | null>(null);
 
+  private readonly router = inject(Router);
+
   async ngOnInit(): Promise<void> {
+    if (this.sesion.rol() === 'repartidor') {
+      void this.router.navigate(['/pedidos']);
+      return;
+    }
     try {
       this.resumen.set(await this.tablero.resumen());
     } catch (e) {

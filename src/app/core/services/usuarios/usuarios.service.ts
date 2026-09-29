@@ -10,8 +10,12 @@ export class UsuariosService {
     return this.api.get('/usuarios');
   }
 
-  crear(datos: { nombre: string; email: string; password: string; rol: Rol }): Promise<Usuario> {
+  crear(datos: { nombre: string; email: string; password: string; rol: Rol; telefono?: string }): Promise<Usuario> {
     return this.api.post('/usuarios', datos);
+  }
+
+  editar(id: string, cambios: { nombre?: string; rol?: Rol; telefono?: string }): Promise<Usuario> {
+    return this.api.patch(`/usuarios/${id}`, cambios);
   }
 
   borrar(id: string): Promise<void> {

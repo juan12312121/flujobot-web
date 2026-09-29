@@ -1,0 +1,65 @@
+:host {
+  display: grid;
+  min-height: 100vh;
+  padding: 20px;
+  place-items: center;
+}
+
+.caja {
+  width: 100%;
+  max-width: 420px;
+  padding: 28px;
+}
+
+.marca {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 18px;
+  font-weight: 700;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--primario);
+  color: var(--sobre-primario);
+}
+
+h1 {
+  margin-bottom: 8px;
+}
+
+form {
+  margin-top: 16px;
+}
+
+.ancho {
+  width: 100%;
+  justify-content: center;
+}
+
+.resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.ok {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--primario-claro);
+  color: var(--primario-osc);
+}
+
+.pie {
+  margin: 18px 0 0;
+  font-size: 13px;
+}

@@ -32,6 +32,22 @@ export class AuthService {
     this.sesion.actualizarEmpresa(empresa);
   }
 
+  recuperar(email: string): Promise<{ mensaje: string }> {
+    return this.api.post('/auth/recuperar', { email });
+  }
+
+  restablecer(token: string, password: string): Promise<{ mensaje: string }> {
+    return this.api.post('/auth/restablecer', { token, password });
+  }
+
+  verificar(token: string): Promise<{ mensaje: string }> {
+    return this.api.post('/auth/verificar', { token });
+  }
+
+  reenviarVerificacion(): Promise<{ mensaje: string }> {
+    return this.api.post('/auth/verificar/reenviar');
+  }
+
   salir(): void {
     this.sesion.cerrar();
   }

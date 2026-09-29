@@ -20,7 +20,7 @@
     <span class="avatar">{{ iniciales() }}</span>
     <div class="quien">
       <strong>{{ sesion.usuario()?.nombre }}</strong>
-      <small>{{ sesion.usuario()?.rol === 'admin' ? 'Administrador' : 'Editor' }}</small>
+      <small>{{ nombreRol(sesion.usuario()?.rol ?? 'editor') }}</small>
     </div>
     <button type="button" class="btn btn-fantasma btn-chico" (click)="salir()">Salir</button>
   </div>
@@ -30,5 +30,12 @@
 
 <main>
   <button type="button" class="btn btn-icono hamburguesa" aria-label="Menú" (click)="menuAbierto.set(true)"><app-icono nombre="menu" /></button>
+  @if (sesion.usuario()?.emailVerificado === false) {
+    <div class="aviso-correo">
+      <app-icono nombre="mensaje" [tam]="16" />
+      <span>Confirma tu correo <b>{{ sesion.usuario()?.email }}</b> para poder recuperar tu cuenta si olvidas la contraseña.</span>
+      <button type="button" class="btn btn-chico" [disabled]="reenviado()" (click)="reenviar()">{{ reenviado() ? 'Enviado' : 'Reenviar enlace' }}</button>
+    </div>
+  }
   <router-outlet />
 </main>

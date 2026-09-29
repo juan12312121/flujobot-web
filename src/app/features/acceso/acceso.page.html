@@ -59,6 +59,8 @@
       <input formControlName="password" type="password" [autocomplete]="registro() ? 'new-password' : 'current-password'" />
       @if (registro()) {
         <small>Mínimo 8 caracteres</small>
+      } @else {
+        <small><a routerLink="/recuperar">¿Olvidaste tu contraseña?</a></small>
       }
     </label>
 

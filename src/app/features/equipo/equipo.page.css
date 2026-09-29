@@ -18,3 +18,18 @@
     grid-template-columns: 1fr;
   }
 }
+
+td small {
+  display: block;
+}
+
+td .insignia {
+  display: inline-block;
+  margin-top: 3px;
+}
+
+.rol {
+  width: auto;
+  min-height: 30px;
+  padding: 3px 8px;
+}
